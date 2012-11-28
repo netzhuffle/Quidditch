@@ -19,6 +19,12 @@ $mainchat_email="info@fidion.de";
     Header("Expires: " . gmDate("D, d M Y H:i:s",Time()-3601) . " GMT");
     Header("Pragma: no-cache");
     Header("Cache-Control: no-cache");
+    
+// Universal Class Loader
+require_once 'Symfony/Component/ClassLoader/UniversalClassLoader.php';
+$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
+$loader->registerNamespace('Netzhuffle', __DIR__);
+$loader->register();
 
 // Variable initialisieren, einbinden, Community-Funktionen laden
 if (!(isset($functions_init_geladen))) require_once "functions-init.php";
@@ -37,6 +43,11 @@ if ( !(isset($conn))) {
  exit;
 }
 
+// Quidditch
+if (isset($r_id)) {
+	$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance($r_id);
+	$quidditch->doStack();
+}
 
 // Funktionen
 

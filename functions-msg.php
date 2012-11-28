@@ -2820,6 +2820,8 @@ default:
 
 };
 
+$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance($r_id);
+$quidditch->command($chatzeile, $u_nick);
 	
 };
 
