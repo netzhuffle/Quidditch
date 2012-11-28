@@ -85,7 +85,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 	// Löscht alle Mails, die älter als $mailloescheauspapierkorb Tage sind
 	if ($mailloescheauspapierkorb < 1) $mailloescheauspapierkorb = 14;
 	$query2="DELETE FROM mail WHERE m_an_uid = $u_id AND m_status = 'geloescht' AND m_geloescht_ts < '".date("YmdHis", mktime(0, 0, 0, date("m")  , date("d")-$mailloescheauspapierkorb, date("Y")))."'";
-	$result2=mysql_query($query2,$conn);
+	$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 //	echo "DEBGUG: $query2";
 	
@@ -119,20 +119,20 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 		if (!isset($m_id)) $m_id = "";
  
 		$query="SELECT u_id,u_level  FROM user WHERE u_nick = '$neue_email[an_nick]'";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$neue_email['m_an_uid']=mysql_result($result,0,"u_id");
 			
 			$ignore=false;
 			$query2="SELECT * FROM iignore WHERE i_user_aktiv='$neue_email[m_an_uid]' AND i_user_passiv = '$u_id'";
-			$result2=mysql_query($query2);
+			$result2=mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
 			$num=mysql_numrows($result2);
 			if ($num >= 1) {$ignore=true;}
 			
 
 			$boxzu=false;
 			$query="SELECT m_id FROM mail WHERE m_von_uid='$neue_email[m_an_uid]' AND m_an_uid='$neue_email[m_an_uid]' and m_betreff = 'MAILBOX IST ZU' and m_status != 'geloescht'";
-		        $result2=mysql_query($query);
+		        $result2=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		        $num=mysql_numrows($result2);
 		        if ($num >= 1) { $boxzu=true;}
 
@@ -191,7 +191,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 		// User-ID Prüfen
 		$neue_email['m_an_uid']=AddSlashes($neue_email['m_an_uid']);
 		$query="SELECT u_nick FROM user WHERE u_id = $neue_email[m_an_uid]";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$an_nick=mysql_result($result,0,"u_nick");
 		} else {
@@ -237,7 +237,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 				// Prüfen ob Empfänger SMS möchte
 				$neue_email['m_an_uid']=AddSlashes($neue_email['m_an_uid']);
 				$query="SELECT u_sms_ok FROM user WHERE u_id = '$neue_email[m_an_uid]'";
-				$result=mysql_query($query);
+				$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 				$a=mysql_fetch_array($result);
 				mysql_free_result($result);
 				$sms_ok=$a[u_sms_ok];
@@ -318,7 +318,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 			"WHERE m_an_uid=$u_id ".
                         "AND m_id=$m_id ";
                                 
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$row=mysql_fetch_object($result);
 		}
@@ -326,7 +326,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 
 		// Nick prüfen
 		$query="SELECT u_id,u_nick FROM user WHERE u_id=".$row->m_von_uid;
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 
 			$row2=mysql_fetch_object($result);
@@ -369,7 +369,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 			from posting
 			left join user on po_u_id = u_id
 			where po_id = $po_vater_id";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$row=mysql_fetch_object($result);
 		}
@@ -414,7 +414,7 @@ if ($u_id && $communityfeatures && $u_level!="G") {
 		// Mails mit Status geloescht löschen
 		echo "<BR>";
 		$query="DELETE FROM mail WHERE m_an_uid=$u_id AND m_status='geloescht'";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if (!isset($neue_email)) $neue_email[] = "";
 		formular_neue_email($neue_email);
 		zeige_mailbox("normal","");

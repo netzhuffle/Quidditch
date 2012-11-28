@@ -56,7 +56,7 @@ function zeige_blacklist($aktion,$zeilen,$sort) {
 		if ($blacklistmaxdays)
 				{
 				$query2="DELETE FROM blacklist WHERE (TO_DAYS(NOW()) - TO_DAYS(f_zeit)>$blacklistmaxdays) ";
-				mysql_query($query2);
+				mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
   	};
 
@@ -68,7 +68,7 @@ function zeige_blacklist($aktion,$zeilen,$sort) {
 		"<INPUT TYPE=\"HIDDEN\" NAME=\"http_host\" VALUE=\"$http_host\">\n".
 		"<TABLE WIDTH=100% BORDER=0 CELLPADDING=3 CELLSPACING=0>";
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result) {
 
 		$anzahl=mysql_num_rows($result);
@@ -98,7 +98,7 @@ function zeige_blacklist($aktion,$zeilen,$sort) {
 					"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_login) AS online ".
 					"from user left join online on o_user=u_id ".
 					"WHERE u_id=$row->f_blacklistid ";
-				$result2=mysql_query($query,$conn);
+				$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result2 && mysql_num_rows($result2)>0) {
 
 					// User gefunden -> Ausgeben
@@ -110,7 +110,7 @@ function zeige_blacklist($aktion,$zeilen,$sort) {
 					// User nicht gefunden, Blacklist-Eintrag löschen
 					$blacklist_nick="NOBODY";
 					$query="DELETE from blacklist WHERE f_id=$row->f_id";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 				};
 
@@ -188,10 +188,10 @@ function loesche_blacklist($f_blacklistid) {
 
 	$query="DELETE from blacklist WHERE ".
 		"f_blacklistid=$f_blacklistid ";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	
 	$query="SELECT u_nick FROM user where u_id=$f_blacklistid";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)!=0) {
 		$f_nick=mysql_result($result,0,0);
 		echo "<P><B>Hinweis:</B> '$f_nick' ist nicht mehr in der Blackliste eingetragen.</P>";
@@ -252,7 +252,7 @@ function neuer_blacklist($f_userid,$blacklist) {
 			"OR ".
 			"(f_userid=$f_userid AND f_blacklistid=$blacklist[u_id])";
 
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)>0){
 
 			echo "<P><B>Fehler:</B> '$blacklist[u_nick]' ist bereits in der Blackliste eingetragen!</P>\n";  

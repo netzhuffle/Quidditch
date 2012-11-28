@@ -143,7 +143,7 @@ if ($u_id) {
 			$o_raum_alt=$o_raum;
 
 			// Bin ich noch online?
-			$result=mysql_query("SELECT HIGH_PRIORITY o_raum,o_ignore FROM online WHERE o_id=$o_id ", $conn);
+			$result=mysql_query("SELECT HIGH_PRIORITY o_raum,o_ignore FROM online WHERE o_id=$o_id ", $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result>0) {
 				if (mysql_Num_Rows($result)==1) {
 					$row=mysql_fetch_object($result);
@@ -205,6 +205,7 @@ if ($u_id) {
 			// Quidditch
 			$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance();
 			$quidditch->doStack();
+			$quidditch->flush();
 
 		endwhile;
 

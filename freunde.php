@@ -97,7 +97,7 @@ if ($admin) $text.="| <A HREF=\"freunde.php?http_host=$http_host&id=$id&aktion=a
 		if ((strlen($editeintrag)>0) && (preg_match("/^[0-9]+$/", trim($editeintrag)) == 1))
 		{
 			$query="SELECT f_text FROM freunde WHERE (f_userid = $u_id or f_freundid = $u_id) AND (f_id = $editeintrag)";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_num_rows($result)==1) 
 			{
  				$infotext=mysql_result($result,0,0);
@@ -111,7 +111,7 @@ if ($admin) $text.="| <A HREF=\"freunde.php?http_host=$http_host&id=$id&aktion=a
 		if ((strlen($f_id)>0) && (preg_match("/^[0-9]+$/", trim($f_id)) == 1))
 		{
 			$query="SELECT f_text FROM freunde WHERE (f_userid = $u_id or f_freundid = $u_id) AND (f_id = $f_id)";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_num_rows($result)==1) 
 			{
 				// f_id ist zahl und gehört zu dem User, also ist update möglich
@@ -138,7 +138,7 @@ if ($admin) $text.="| <A HREF=\"freunde.php?http_host=$http_host&id=$id&aktion=a
 		// Neuer Freund, 2. Schritt: Nick Prüfen
                 $neuer_freund['u_nick']=htmlspecialchars(AddSlashes($neuer_freund['u_nick']));
 		$query="SELECT u_id, u_level FROM user WHERE u_nick = '$neuer_freund[u_nick]'";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) 
 		{
 			$neuer_freund['u_id']=mysql_result($result,0,0);
@@ -146,7 +146,7 @@ if ($admin) $text.="| <A HREF=\"freunde.php?http_host=$http_host&id=$id&aktion=a
 			
 			$ignore=false;
 			$query2="SELECT * FROM iignore WHERE i_user_aktiv='$neuer_freund[u_id]' AND i_user_passiv = '$u_id'";
-			$result2=mysql_query($query2);
+			$result2=mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
 			$num=mysql_numrows($result2);
 			if ($num >= 1) {$ignore=true;};
 			@mysql_free_result($result2);
@@ -187,7 +187,7 @@ if ($admin) $text.="| <A HREF=\"freunde.php?http_host=$http_host&id=$id&aktion=a
 	case "admins":
 		// Alle Admins (Status C und S) als Freund hinzufügen
 		$query="SELECT u_id,u_nick,u_level FROM user WHERE u_level='S' OR u_level='C'";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)>0) {
 			while($rows=mysql_fetch_array($result)) {
 				unset($neuer_freund);

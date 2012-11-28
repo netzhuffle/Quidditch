@@ -14,7 +14,7 @@ function formular_neue_email($neue_email,$m_id="") {
 	// Nickname aus u_nick lesen und setzen
 	if (isset($neue_email['m_an_uid']) && $neue_email['m_an_uid']) {
 		$query="SELECT u_nick FROM user WHERE u_id = $neue_email[m_an_uid]";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$an_nick=mysql_result($result,0,0);
 			if (strlen($an_nick)>0) $neue_email['an_nick']=$an_nick;
@@ -74,7 +74,7 @@ function formular_neue_email2($neue_email,$m_id="") {
 		$titel="Mail weiterleiten an";
 		$query="SELECT m_betreff,m_text from mail ".
 			"where m_id=$m_id AND m_an_uid=$u_id";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$row=mysql_fetch_object($result);
 			
@@ -105,7 +105,7 @@ function formular_neue_email2($neue_email,$m_id="") {
 			"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_login) AS online ".
 			"from user left join online on o_user=u_id ".
 			"WHERE u_id = $neue_email[m_an_uid]";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$row=mysql_fetch_object($result);
 			
@@ -211,7 +211,7 @@ function zeige_mailbox($aktion,$zeilen) {
 		"<TABLE WIDTH=100% BORDER=0 CELLPADDING=3 CELLSPACING=0>";
 
 	// system_msg("",0,$u_id,$system_farbe,"DEBUG: $query");
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result) {
 
 		$anzahl=mysql_num_rows($result);
@@ -293,7 +293,7 @@ function zeige_email($m_id) {
 		"AND m_id=$m_id ".
 		"order by m_zeit desc";
 	// system_msg("",0,$u_id,$system_farbe,"DEBUG: $query");
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result && mysql_num_rows($result)==1) {
 
@@ -368,7 +368,7 @@ function loesche_mail($m_id,$u_id) {
 
 	$query="SELECT m_zeit,m_id,m_status FROM mail ".
 		"WHERE m_id=$m_id AND m_an_uid=$u_id";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) {
 
 		$row=mysql_fetch_object($result);

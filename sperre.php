@@ -36,13 +36,13 @@ function liste() {
 		if (count($sperre_dialup) >= 1)
 		{
 		$query="DELETE FROM ip_sperre WHERE ($sperr) AND to_days(now())-to_days(is_zeit) > 3 ";
-		mysql_query($query);
+		mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		}
 
 		if ($raumsperre)
 		{
 		$query="delete from sperre where to_days(now())-to_days(s_zeit) > $raumsperre";
-		mysql_query($query);
+		mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		}
 
 		// Alle Sperren ausgeben
@@ -51,7 +51,7 @@ function liste() {
 			"FROM ip_sperre,user ".
 			"WHERE is_owner=u_id ".
 			"ORDER BY is_zeit DESC,is_domain,is_ip";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_Num_Rows($result);
 
 		if ($rows>0):
@@ -203,14 +203,14 @@ if (strlen($u_id)>0 && $admin):
 
 	case "loginsperre0":
 		$query2="DELETE FROM ip_sperre WHERE is_domain = '-GLOBAL-' ";
-		$result2=mysql_query($query2,$conn);
+		$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		unset($aktion);
 	break;
 
 	case "loginsperregast0":
 		$query2="DELETE FROM ip_sperre WHERE is_domain = '-GAST-' ";
-		$result2=mysql_query($query2, $conn);
+		$result2=mysql_query($query2, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		unset($aktion);
 	break;
@@ -259,7 +259,7 @@ if (strlen($u_id)>0 && $admin):
 	if ($communityfeatures)
 	{ 
             $query="SELECT is_domain FROM ip_sperre WHERE is_domain = '-GLOBAL-'";
-            $result=mysql_query($query,$conn);
+            $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
             if ($result && mysql_num_rows($result) > 0) 
             {  
           	    $text.="| <A HREF=\"sperre.php?http_host=$http_host&id=$id&aktion=loginsperre0\">"."Loginsperre: Deaktivieren"."</A>\n";
@@ -272,7 +272,7 @@ if (strlen($u_id)>0 && $admin):
 
 
             $query="SELECT is_domain FROM ip_sperre WHERE is_domain = '-GAST-'";
-            $result=mysql_query($query,$conn);
+            $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
             if ($result && mysql_num_rows($result) > 0) 
             {    
 	        $text.="| <A HREF=\"sperre.php?http_host=$http_host&id=$id&aktion=loginsperregast0\">"."Loginsperre Gast: Deaktivieren"."</A>\n";
@@ -359,7 +359,7 @@ if (strlen($u_id)>0 && $admin):
 			$query="SELECT is_infotext,is_domain,is_ip FROM ip_sperre ".
 				"WHERE is_id=$is_id";
 
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			$rows=mysql_Num_Rows($result);
 
 			if ($rows==1):
@@ -408,7 +408,7 @@ if (strlen($u_id)>0 && $admin):
 			$query="SELECT is_infotext,is_domain,is_ip_byte,SUBSTRING_INDEX(is_ip,'.',is_ip_byte) as isip FROM ip_sperre ".
 				"WHERE is_id=$is_id";
 
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			$rows=mysql_Num_Rows($result);
 
 			if ($rows==1):
@@ -419,7 +419,7 @@ if (strlen($u_id)>0 && $admin):
 				$query2="DELETE FROM ip_sperre ".
 				"WHERE is_id=$is_id";
 
-				$result2=mysql_query($query2);
+				$result2=mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
 
 				if (strlen($row->is_domain)>0):	
 					echo "<P>".str_replace("%row->is_domain%",$row->is_domain,$t['sonst10'])."</P>\n";
@@ -452,7 +452,7 @@ if (strlen($u_id)>0 && $admin):
 			$query="SELECT is_infotext,is_domain,is_ip,is_ip_byte,is_warn FROM ip_sperre ".
 			"WHERE is_id=$is_id";
 
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			$rows=mysql_Num_Rows($result);
 
 			if ($rows==1):

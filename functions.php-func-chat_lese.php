@@ -44,7 +44,7 @@ if ($back==1){
 
 	// o_chat_id lesen
 	$query="SELECT HIGH_PRIORITY o_chat_id FROM online WHERE o_id=$o_id";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) {
 		$o_chat_id=mysql_result($result,0,"o_chat_id");
 	}else {
@@ -57,7 +57,7 @@ if ($back==1){
 	$query="SELECT c_id FROM chat WHERE c_raum='$raum' AND c_id >= $o_chat_id".$qquery;
 
 	unset($rows);
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -67,7 +67,7 @@ if ($back==1){
 
 	$query="SELECT c_id FROM chat WHERE c_typ IN ('P','S') AND c_an_user=$u_id AND c_id >= $o_chat_id".
 		$qquery;
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -83,7 +83,7 @@ if ($back==1){
 	// Admins dürfen alle Nachrichten sehen
 	if (!$admin) {
 		$query="SELECT HIGH_PRIORITY o_chat_id FROM online WHERE o_id=$o_id";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 			$o_chat_id=mysql_result($result,0,"o_chat_id");
 		} else {
@@ -100,7 +100,7 @@ if ($back==1){
 		$qquery;
 
 	unset($rows);
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -114,7 +114,7 @@ if ($back==1){
 	##### zu debug-zwecken dies mal einkommentieren ####
 	#print htmlentities($query);
 	
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -151,7 +151,7 @@ if ($back==1){
 		$qquery;
 
 	unset($rows);
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -162,7 +162,7 @@ if ($back==1){
 	$query="SELECT c_id FROM chat WHERE c_typ IN ('P','S') AND c_an_user=$u_id AND c_id > $letzte_id".
 		$qquery;
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -181,7 +181,7 @@ $nick=str_replace("+","\\+",$u_nick);
 // Query aus Array erzeugen und die Chatzeilen lesen
 if (isset($rows) && is_array($rows)) {
 	$query="SELECT * FROM chat WHERE c_id IN (".implode(",",$rows).") ORDER BY c_id";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 } else {
 	unset($result);
 };

@@ -70,7 +70,7 @@ if ($unterdruecke_user_im_raum_anzeige != "1")
 	"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ".
 	"ORDER BY o_name";
 
-        $result=mysql_query($query,$conn);
+        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$rows=@mysql_Num_Rows($result);
 
 	if ($result AND $rows>0):
@@ -143,7 +143,7 @@ $query="SELECT o_id,r_name FROM online left join raum on r_id=o_raum ".
 	"WHERE o_user=$user ".
 	"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout";
                         
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 if ($result && mysql_NumRows($result)>0):
 	$ist_online_raum=mysql_result($result,0,"r_name");
@@ -178,7 +178,7 @@ function schreibe_moderation() {
 
 	// alles aus der moderationstabelle schreiben, bei der u_id==c_moderator;
 	$query="SELECT * FROM moderation WHERE c_moderator=$u_id AND c_typ='N'";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result>0) {
 		while ($f=mysql_fetch_array($result)) {
 			unset($c);
@@ -196,7 +196,7 @@ function schreibe_moderation() {
 			schreibe_chat($c);
 			// und datensatz löschen...
 			$query="DELETE FROM moderation WHERE c_id=$f[c_id]";
-			$result2=mysql_query($query, $conn);
+			$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		}
 	}
 }
@@ -214,7 +214,7 @@ if (isset($f['c_text']) && strlen($f['c_text'])>0):
 		$laenge=strlen($temp);
 		$i=0;
 		// Tabelle LOCK
-		$result=mysql_query("LOCK TABLES chat WRITE",$conn);
+		$result=mysql_query("LOCK TABLES chat WRITE",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		while($i<$laenge):
 			$f['c_text']=substr($temp,$i,255);
 			if ($i==0):
@@ -230,7 +230,7 @@ if (isset($f['c_text']) && strlen($f['c_text'])>0):
 			$i=$i+255;
 			$back=schreibe_db("chat",$f,"","c_id");
 		endwhile;
-		$result=mysql_query("UNLOCK TABLES chat",$conn);
+		$result=mysql_query("UNLOCK TABLES chat",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	else:
 	
 		// Normale Zeile in Tabelle schreiben
@@ -256,12 +256,12 @@ if ($logout_logging) logout_debug($o_id,$info);
  
 // Tabellen online+user exklusiv locken
 $query="LOCK TABLES online WRITE, user WRITE";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 $o_id=AddSlashes($o_id); // sec
 
 // Aktuelle Punkte auf Punkte in Usertabelle addieren
-$result=@mysql_query("select o_punkte,o_name,o_knebel, UNIX_TIMESTAMP(o_knebel)-UNIX_TIMESTAMP(NOW()) as knebelrest FROM online WHERE o_id=$o_id",$conn);
+$result=@mysql_query("select o_punkte,o_name,o_knebel, UNIX_TIMESTAMP(o_knebel) or trigger_error(mysql_error(), E_USER_ERROR)-UNIX_TIMESTAMP(NOW()) as knebelrest FROM online WHERE o_id=$o_id",$conn);
 if ($result && mysql_num_rows($result)==1) 
 {
 	$row=mysql_fetch_object($result);
@@ -282,25 +282,25 @@ if ($result && mysql_num_rows($result)==1)
 		"u_punkte_gesamt=u_punkte_gesamt+$row->o_punkte, ".
 		"u_knebel='$knebelzeit' ".
 		"where u_id=$u_id";
-	$result2=mysql_query($query,$conn);
+	$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 }
 @mysql_free_result($result);
 
 
 // User löschen
-$result2=mysql_query("DELETE FROM online WHERE o_id=$o_id OR o_user=$u_id",$conn);
+$result2=mysql_query("DELETE FROM online WHERE o_id=$o_id OR o_user=$u_id",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 // $datum=date("l dS of F Y h:i:s A");
 // system_msg("",0,$u_id,$u_farbe,"<B>DEBUG:</B> Logoff um $datum der o_id/u_id $o_id/$u_id");
 
 // Lock freigeben
 $query="UNLOCK TABLES";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 // Punkterepair 
 $repair1 = "UPDATE user SET u_punkte_jahr = 0, u_punkte_monat = 0, u_punkte_datum_jahr = YEAR(NOW()), u_punkte_datum_monat = MONTH(NOW()), u_login=u_login WHERE u_punkte_datum_jahr != YEAR(NOW()) AND u_id=$u_id";
-mysql_query($repair1);
+mysql_query($repair1) or trigger_error(mysql_error(), E_USER_ERROR);
 $repair2 = "UPDATE user SET u_punkte_monat = 0, u_punkte_datum_monat = MONTH(NOW()), u_login=u_login WHERE u_punkte_datum_monat != MONTH(NOW()) AND u_id=$u_id";
-mysql_query($repair2);
+mysql_query($repair2) or trigger_error(mysql_error(), E_USER_ERROR);
 
 // Nachrichten an Freunde verschicken
 if ($communityfeatures) {
@@ -309,7 +309,7 @@ if ($communityfeatures) {
 	       "SELECT f_id,f_text,f_userid,f_freundid,f_zeit FROM freunde WHERE f_freundid=$u_id AND f_status = 'bestaetigt' ".
 	       "ORDER BY f_zeit desc "; 
 
-        $result=mysql_query($query,$conn);
+        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
         if ($result && mysql_num_rows($result)>0) {
 
@@ -370,7 +370,7 @@ $back=schreibe_chat($f);
 if ($u_id) {
 	$query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
 		"WHERE o_user=$u_id";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 };
 
 
@@ -402,7 +402,7 @@ $back=schreibe_chat($f);
 if ($von_user_id) {
 	$query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
 		"WHERE o_user=$von_user_id";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 };
 
 return($back);
@@ -443,7 +443,7 @@ if ($von_user_id) {
 	$von_user_id=addslashes($von_user_id); // sec
 	$query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
 		"WHERE o_user=$von_user_id";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 };
 
 
@@ -480,7 +480,7 @@ function aktualisiere_online($u_id,$o_raum) {
 global $dbase,$conn;
 // sec ??
 $query="UPDATE online SET o_aktiv=NULL WHERE o_user=$u_id";
-$result=mysql_query($query,$conn); 
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR); 
 @mysql_free_result($result);
 };
 
@@ -510,7 +510,7 @@ $query = "SELECT HIGH_PRIORITY *,UNIX_TIMESTAMP(o_timeout_zeit) as o_timeout_zei
 		"UNIX_TIMESTAMP(o_knebel)-UNIX_TIMESTAMP(NOW()) as o_knebel FROM online ".
 		"WHERE o_hash='$id' ";
 
-$result = mysql_query($query,$conn);
+$result = mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if (!$result) {
 	echo "Fehler: ".mysql_error()."<br><b>$query</b><br>";
 	exit;
@@ -727,22 +727,22 @@ if (strlen($id)==0 || $id==0) {
 
 		// ID aus sequence verwenden
 		$query="LOCK TABLES sequence WRITE";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$query="SELECT se_nextid FROM sequence WHERE se_name='$db'";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result):
 			$id=mysql_result($result,0,0);
 			mysql_free_result($result);
 			$query="UPDATE sequence SET se_nextid='".($id+1)."' WHERE se_name='$db'";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		else:
 			echo "Schwerer Fehler in $query: ".mysql_errno() . " - " . mysql_error();
 			$query="UNLOCK TABLES";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			die();
 		endif;
 		$query="UNLOCK TABLES";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	else:
 
@@ -768,7 +768,7 @@ if (strlen($id)==0 || $id==0) {
 	};
 
 	$query="INSERT INTO $db SET $id_name=$id ".$q;
-        $result=mysql_query($query,$conn);
+        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if (!$result) {
 		echo "Fataler Fehler in $query: ".mysql_errno() . " - " . mysql_error();
 		die();
@@ -798,7 +798,7 @@ if (strlen($id)==0 || $id==0) {
 	};
 	$q="UPDATE $db SET ".$q." WHERE $id_name=$id";
 	# echo "DEBUG: $q  <BR>"; 
-	$result=mysql_query($q,$conn);
+	$result=mysql_query($q,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 };
 
 
@@ -811,7 +811,7 @@ if ($db=="user" && $id_name=="u_id"):
 		"u_away,u_email,u_adminemail,u_smilie,u_punkte_gesamt,u_punkte_gruppe, ".
 		"u_chathomepage,u_systemmeldungen,u_punkte_anzeigen ".
 		"FROM user WHERE u_id=$id";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1):
 
 		$userdata=mysql_fetch_array($result,MYSQL_ASSOC);
@@ -840,7 +840,7 @@ if ($db=="user" && $id_name=="u_id"):
 			"o_name='".addslashes($userdata['u_nick'])."' ".
 			"WHERE o_user=$id";
 		// echo "DEBUG: $query<BR>";
-		mysql_query($query,$conn);
+		mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		mysql_free_result($result);
 
         endif;
@@ -1015,7 +1015,7 @@ function raum_ist_moderiert($raum) {
 	$moderiert=0;
 
 	$query="SELECT * FROM raum WHERE r_id=$raum";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)>0) {
 		$raum_einstellungen=mysql_fetch_array($result);
 		$r_status1=$raum_einstellungen['r_status1'];
@@ -1026,7 +1026,7 @@ function raum_ist_moderiert($raum) {
 		$query="SELECT o_user FROM online ".
 			"WHERE o_raum=$raum AND o_level='M' ";
 		// system_msg("",0,$u_id,$system_farbe,$query." - $r_status1");
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if (mysql_num_rows($result)>0) $moderiert=1;
 		mysql_free_result($result);
 	}
@@ -1165,7 +1165,7 @@ function user($zeige_user_id,$userdaten=0,$link=TRUE,$online=FALSE,$trenner="&nb
 			"date_format(u_login,'%d.%m.%y %H:%i') as login ".
 			"FROM user left join online on o_user=u_id ".
 			"where u_id=$zeige_user_id";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_Num_Rows($result)==1){
 			$userdaten=mysql_fetch_object($result);
 			$user_id=$userdaten->u_id;
@@ -1198,7 +1198,7 @@ function user($zeige_user_id,$userdaten=0,$link=TRUE,$online=FALSE,$trenner="&nb
 	if (!isset($user_punkte_anzeigen) || ($user_punkte_anzeigen != "Y" and $user_punkte_anzeigen != "N"))
 	{
 		$query="SELECT u_punkte_anzeigen FROM user where u_id=$user_id";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_Num_Rows($result)==1){
 			$userdaten=mysql_fetch_object($result);
 			$user_punkte_anzeigen=$userdaten->u_punkte_anzeigen;
@@ -1509,7 +1509,7 @@ function logout_debug($o_id,$info) {
 	if ($info=="login") $logout[lo_aktion]="login";
 
 	$o_id=AddSlashes($o_id);
-	$result=mysql_query("select * FROM online WHERE o_id=$o_id",$conn);
+	$result=mysql_query("select * FROM online WHERE o_id=$o_id",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) {
 		$row=mysql_fetch_array($result);
 		$logout['lo_nick']=$row['o_name'];
@@ -1520,7 +1520,7 @@ function logout_debug($o_id,$info) {
 		$logout['lo_onlinedump']=serialize($row);
 		@mysql_free_result($result);
 	};
-	$result=mysql_query("select u_login FROM user WHERE u_nick='$logout[lo_nick]'",$conn);
+	$result=mysql_query("select u_login FROM user WHERE u_nick='$logout[lo_nick]'",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) {
 		$row=mysql_fetch_array($result);
 		$logout[lo_login]=$row[u_login];
@@ -1533,7 +1533,7 @@ function logout_debug($o_id,$info) {
 	$conn2=mysql_connect($STAT_DB_HOST, $STAT_DB_USER, $STAT_DB_PASS);
 	mysql_set_charset("utf8");
 	mysql_select_db($STAT_DB_NAME, $conn2);
-	if ($conn2) mysql_query($query, $conn2);
+	if ($conn2) mysql_query($query, $conn2) or trigger_error(mysql_error(), E_USER_ERROR);
 	
 
 	$conn=mysql_connect($mysqlhost,$mysqluser,$mysqlpass);

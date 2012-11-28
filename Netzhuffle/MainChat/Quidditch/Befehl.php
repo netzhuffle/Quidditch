@@ -32,7 +32,7 @@ class Befehl {
 					}
 				}
 			} elseif($this->befehl == "Dice" && $this->param == null) {
-				mysql_query("INSERT INTO ".DB_PREFIX."action (typ, text, userid, time) VALUES (".CODE_MESSAGE.", '/dice 2w6', $wer->id, ".floor(microtime(true) * 1000).")") or trigger_error(mysql_error(), E_USER_ERROR);
+				mysql_query("INSERT INTO ".DB_PREFIX."action (typ, text, userid, time) or trigger_error(mysql_error(), E_USER_ERROR) VALUES (".CODE_MESSAGE.", '/dice 2w6', $wer->id, ".floor(microtime(true) * 1000).")") or trigger_error(mysql_error(), E_USER_ERROR);
 			} elseif(true) { // keine Berechtigung für Befehl
 				$fehler = new Befehl($quidditch->schiedsrichter, "Write", "(Befehl $this->befehl von {$this->wer->name} momentan nicht erlaubt..)");
 				$quidditch->addStackItem($fehler, 0);

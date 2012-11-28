@@ -20,7 +20,7 @@ $gekauftesms=floor($cc_amount / $sms[preis] + 0.5);
 
 // Auslesen des bisherigen Guthabens
 $query="SELECT u_sms_guthaben FROM user WHERE u_id = '$u_id'";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $a=@mysql_fetch_array($result);
 @mysql_free_result($result);
 
@@ -33,9 +33,9 @@ $conn2=mysql_connect("localhost","www","");
 mysql_set_charset("utf8");
 mysql_selectdb("ipayment",$conn2);
 $query="INSERT INTO transaction_log (u_nick, u_id, datum, handynr, ip, http_host, trx_amount) VALUES ('$u_nick','$u_id',NOW(),'$handynr','$ret_ip','$http_host','$trx_amount')";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $id=mysql_insert_id();
 $v=addslashes($v);
 $query="INSERT INTO payment_log (id, payment_text) VALUES ('$id','$v')";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 ?>

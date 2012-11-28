@@ -46,7 +46,7 @@ if ( (!isset($http_host) && !isset($login)) || ($frame == 1) ){
 
 			// Alle Hosts bestimmen, die in den letzten 150sek erreichbar waren und die den Typ "apache" haben...
                         mysql_select_db("chat_info", $connect);
-       			$result=mysql_query("select h_host from host where (NOW()-h_time)<150 and h_type='apache' order by h_av1", $connect);
+       			$result=mysql_query("select h_host from host where (NOW() or trigger_error(mysql_error(), E_USER_ERROR)-h_time)<150 and h_type='apache' order by h_av1", $connect);
 			$rows=mysql_numrows($result);
 
 			// print "<!-- $rows -->";
@@ -213,7 +213,7 @@ if ($raum_auswahl && (!isset($beichtstuhl) || !$beichtstuhl)):
 		"WHERE (r_status1='O' OR r_status1 LIKE BINARY 'm') AND r_status2='P' ".
 		"ORDER BY r_name";
 	
-	$result=@mysql_query($query, $conn);
+	$result=@mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result) {
 		$rows=mysql_num_rows($result);
 	} else {
@@ -289,7 +289,7 @@ $ip_name= @gethostbyaddr($ip_adr);
 
 // TEST - Sperrt den Chat, wenn in der Sperre Domain "-GLOBAL-" ist
 $query="SELECT is_domain FROM ip_sperre WHERE is_domain = '-GLOBAL-'";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if ($result && mysql_num_rows($result) > 0) { $abweisen = true; }
 mysql_free_result($result);
 
@@ -309,7 +309,7 @@ $temp_gast_sperre = false;
 // Wenn die dbase = "mainchat" und in Sperre = "-GAST-"
 // dann Gastlogin gesperrt
 $query="SELECT is_domain FROM ip_sperre WHERE is_domain = '-GAST-'";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if ($result && mysql_num_rows($result) > 0)  { $temp_gast_sperre = true; }
 mysql_free_result($result);
 
@@ -318,7 +318,7 @@ $query="SELECT * FROM ip_sperre ".
 	"WHERE (SUBSTRING_INDEX(is_ip,'.',is_ip_byte) ".
 	" LIKE SUBSTRING_INDEX('$ip_adr','.',is_ip_byte) AND is_ip IS NOT NULL) ".
 	"OR (is_domain LIKE RIGHT('$ip_name',LENGTH(is_domain)) AND LENGTH(is_domain)>0)";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 $rows=mysql_num_rows($result);
 
 if ($rows>0){
@@ -351,7 +351,7 @@ if (!$abweisen && $ip_adr && $ip_adr!=$_SERVER["REMOTE_ADDR"]){
 		"WHERE (SUBSTRING_INDEX(is_ip,'.',is_ip_byte) ".
 		" LIKE SUBSTRING_INDEX('$ip_adr','.',is_ip_byte) AND is_ip IS NOT NULL) ".
 		"OR (is_domain LIKE RIGHT('$ip_name',LENGTH(is_domain)) AND LENGTH(is_domain)>0)";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$rows=mysql_num_rows($result);
 	
 	if ($rows>0){
@@ -371,7 +371,7 @@ if (!$abweisen && $ip_adr && $ip_adr!=$_SERVER["REMOTE_ADDR"]){
 
 // zweite Prüfung, gibts was, was mit "*" in der mitte schafft? für p3cea9*.t-online.de
 $query="SELECT * FROM ip_sperre WHERE is_domain like '_%*%_'";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if ($result && mysql_num_rows($result)>0) {
 	while ($row=mysql_fetch_object($result)) {
 		$part=explode("*",$row->is_domain,2);
@@ -401,7 +401,7 @@ if ($abweisen && $aktion <> "relogin" && strlen($login)>0)
 {
 	// test: ist user=admin -> dann nicht abweisen...
 	$query="select u_nick,u_level from user where u_nick='".coreCheckName($login,$check_name)."' AND (u_level in ('S','C'))";
-	$r=mysql_query($query,$conn);
+	$r=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$rw=mysql_num_rows($r);
 
 	if ($rw==1 && (strlen($aktion)>0)) 
@@ -423,7 +423,7 @@ if ($abweisen && $aktion <> "relogin" && strlen($login)>0)
 		       "AND (u_level in ('A','C','G','M','S','U')) ";
 		       "AND u_passwort = encrypt('$passwort',u_passwort)"; // Nutzt die MYSQL -> Unix crypt um DES, SHA256, etc. automatisch zu erkennen
 		// Durchleitung wg. Punkten im Fall der MD5() verschlüsselung wird nicht gehen
-     		$r=mysql_query($query,$conn);
+     		$r=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rw=mysql_num_rows($r);
 
 		if ($rw == 1 && strlen($aktion)>0)
@@ -455,7 +455,7 @@ if ($abweisen && $aktion <> "relogin" && strlen($login)>0)
 		else
 		{
 			$query2="SELECT r_name from raum where r_id=$eintritt";
-			$result2=mysql_query($query2,$conn);
+			$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result2 AND mysql_num_rows($result2)>0) 
 			{ 
 				$raumname=" (".mysql_result($result2,0,0).") ";
@@ -468,7 +468,7 @@ if ($abweisen && $aktion <> "relogin" && strlen($login)>0)
 		}
 
 		$query2="SELECT o_user FROM online WHERE (o_level='S' OR o_level='C')";
-		$result2=mysql_query($query2,$conn);
+		$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result2 AND mysql_num_rows($result2)>0) 
 		{
 			$txt=str_replace("%ip_adr%",$ip_adr,$t['ipsperre1']);
@@ -584,7 +584,7 @@ if ($aktion == "mailcheck" && isset($email) && isset($hash))
 	{
 	$email=addslashes($email);
 	$query="SELECT * FROM mail_check WHERE email = '$email'";
-	$result=mysql_query($query);
+	$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_numrows($result) == 1)
 		{
 		$a=mysql_fetch_array($result);
@@ -604,7 +604,7 @@ if ($aktion == "mailcheck" && isset($email) && isset($hash))
 					echo "<P><B>Fehler:</B> Die URL ist nicht korrekt! Bitte melden Sie sich ".
 						"<A HREF=\"".$chatserver."index.php?http_host=$http_host\">hier</A> neu an.</P>";
 					$query="DELETE FROM mail_check WHERE email = '$email'";
-					mysql_query($query);
+					mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 					zeige_fuss();
 					exit;
 					}
@@ -642,7 +642,7 @@ switch ($aktion) {
 		$email=addslashes(urldecode($email));
 		$query="SELECT u_id, u_login, u_nick, u_name, u_passwort, u_adminemail, u_punkte_jahr FROM user ".
 		       "WHERE u_nick = '$nickname' AND u_level = 'U' AND u_adminemail = '$email' LIMIT 1"; 
-		$result=mysql_query($query);
+		$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_numrows($result) == 1)
 		{
 			$a=mysql_fetch_array($result);
@@ -676,7 +676,7 @@ switch ($aktion) {
 		{
   			$query="SELECT u_id, u_login, u_nick, u_name, u_passwort, u_adminemail, u_punkte_jahr FROM user ".
 			       "WHERE u_nick = '$nickname' AND u_level = 'U' AND u_adminemail = '$email' LIMIT 2"; 
-			$result=mysql_query($query, $conn);
+			$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_numrows($result) == 1)
 			{
 				$a=mysql_fetch_array($result);
@@ -752,7 +752,7 @@ switch ($aktion) {
 	else if ($richtig && $u_id)
 	{
 		$query="SELECT u_adminemail, u_nick FROM user WHERE u_id = '$u_id' AND u_level = 'U' LIMIT 2";
-		$result=mysql_query($query);
+		$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_numrows($result) == 1)
 		{
 			unset ($f);
@@ -797,7 +797,7 @@ switch ($aktion) {
 		else
 		{
 			$query="SELECT * FROM mail_check WHERE email = '$email'";
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_numrows($result) == 1)
 			{
 				$a=mysql_fetch_array($result);
@@ -909,7 +909,7 @@ switch ($aktion) {
 		// wir prüfen ob User gesperrt ist
 		// entweder User = gesperrt
 		$query="SELECT * FROM user WHERE ( (u_adminemail='$email') OR (u_email='$email') ) AND u_level='Z'";
-		$result=mysql_query($query);
+		$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		$num=mysql_numrows($result);
 		$gesperrt=false;
 		if ($num >= 1) { $gesperrt=true;  print $t['neu40']; }
@@ -917,7 +917,7 @@ switch ($aktion) {
 		// oder user ist auf Blacklist
 		$query="select u_nick from blacklist left join user on f_blacklistid=u_id ".
 			"WHERE user.u_adminemail ='$email'";
-		$result=mysql_query($query);
+		$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		$num=mysql_numrows($result);
 		if ($num >= 1) { $gesperrt=true;  print $t['neu40']; }
 
@@ -934,7 +934,7 @@ switch ($aktion) {
 		if (($begrenzung_anmeld_pro_mailadr > 0) and (!$gesperrt))
 		{
 			$query="select u_id from user WHERE u_adminemail = '$email'";
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			$num=mysql_numrows($result);
 			if ($num >= $begrenzung_anmeld_pro_mailadr)
 			{  $gesperrt=true; echo str_replace("%anzahl%", $begrenzung_anmeld_pro_mailadr, $t['neu55']); }; 
@@ -944,7 +944,7 @@ switch ($aktion) {
 		{
 		    // Überprüfung auf Formular mehrmals abgeschickt
 		    $query="DELETE FROM mail_check WHERE email = '$email'";
-		    mysql_query($query);
+		    mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		    $hash=md5($email."+".date("Y-m-d"));
 		    $email=urlencode($email);
@@ -987,7 +987,7 @@ switch ($aktion) {
 		    mail($mailempfaenger,$mailbetreff,$text2,"From: $webmaster ($chat)"."\n"."X-MC-IP: ".$_SERVER["REMOTE_ADDR"]."\n"."X-MC-TS: ".time());
 		    $email=addslashes($email);
 		    $query="REPLACE INTO mail_check (email,datum) VALUES ('$email',NOW())";
-		    $result=mysql_query($query);
+		    $result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		
 		}
@@ -1052,7 +1052,7 @@ switch ($aktion) {
 					"AND o_ip='".$_SERVER["REMOTE_ADDR"]."' ".
 					"AND o_level='G' ".
 					"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ";
-			$result=mysql_query($query4711,$conn);
+			$result=mysql_query($query4711,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result) $rows=mysql_Num_Rows($result);
 			mysql_free_result($result);
 
@@ -1125,7 +1125,7 @@ switch ($aktion) {
 					$login=$gast_name[mt_rand(1,$anzahl)];
 					$query4711="SELECT u_id FROM user ".
       							"WHERE u_nick='$login' ";
-					$result=mysql_query($query4711,$conn);
+					$result=mysql_query($query4711,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					$rows=mysql_num_rows($result);
 					$i++;
 				endwhile;
@@ -1138,7 +1138,7 @@ switch ($aktion) {
 					$login=$t['login13'] . strval((mt_rand(1,10000)) + 1);
 					$query4711="SELECT u_id FROM user ".
       							"WHERE u_nick='$login' ";
-					$result=mysql_query($query4711,$conn);
+					$result=mysql_query($query4711,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					$rows=mysql_num_rows($result);
 					$i++;
 				endwhile;
@@ -1161,7 +1161,7 @@ switch ($aktion) {
 		// Prüfung, ob dieser User bereits existiert
 		$query4711="SELECT u_id FROM user ".
 			"WHERE u_nick='$f[u_nick]' ";
-		$result=mysql_query($query4711,$conn);
+		$result=mysql_query($query4711,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		if (mysql_num_rows($result)==0):
 			// Account in DB schreiben
@@ -1177,7 +1177,7 @@ switch ($aktion) {
 	$query4711="SELECT u_id,u_nick,u_loginfehler,u_login,u_backup FROM user ".
 		"WHERE (u_name = '$login' OR u_nick = '$login') ".
 		"AND (u_level='S' OR u_level='C') ";
-	$result=mysql_query($query4711,$conn);
+	$result=mysql_query($query4711,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result) $rows=mysql_num_rows($result);
 
 	// Voreinstellung: Weiter mit Login
@@ -1189,7 +1189,7 @@ switch ($aktion) {
 		$query4711="SELECT u_id,u_nick,u_loginfehler,u_login,u_backup FROM user ".
 			"WHERE (u_nick = '$login') ".
 			"AND (u_level='S' OR u_level='C') ";
-		$result=mysql_query($query4711,$conn);
+		$result=mysql_query($query4711,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result) $rows=mysql_num_rows($result);
 	};
 	if ($result && $rows==1) {
@@ -1306,7 +1306,7 @@ switch ($aktion) {
 		if ($chat_max[$u_level]!=0) {
 			$query="SELECT count(o_id) FROM online ".
 				"WHERE (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ";
-			$result2=mysql_query($query,$conn);
+			$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result2) $onlineanzahl=mysql_result($result2,0,0);
 			mysql_free_result($result2);
 		}
@@ -1501,7 +1501,7 @@ switch ($aktion) {
 			// User in Blacklist überprüfen
 			// in den kostenlosen Chats konnte es sein, das die Tabelle nicht vorhanden ist
 			$query2="SELECT f_text from blacklist where f_blacklistid=$u_id";
-			$result2=mysql_query($query2,$conn);
+			$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result2 AND mysql_num_rows($result2)>0) {
 				$infotext="Blacklist: ".mysql_result($result2,0,0);
 				$warnung=TRUE;
@@ -1518,7 +1518,7 @@ switch ($aktion) {
 				else
 				{
 					$query2="SELECT r_name from raum where r_id=$eintritt";
-					$result2=mysql_query($query2,$conn);
+					$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					if ($result2 AND mysql_num_rows($result2)>0) {
 						$raumname=" (".mysql_result($result2,0,0).") ";
 					} else {
@@ -1528,7 +1528,7 @@ switch ($aktion) {
 				}
 
 				$query2="SELECT o_user FROM online WHERE (o_level='S' OR o_level='C')";
-				$result2=mysql_query($query2,$conn);
+				$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result2 AND mysql_num_rows($result2)>0) {
 					$txt=str_replace("%ip_adr%",$ip_adr,$t['default6']);
 					$txt=str_replace("%ip_name%",$ip_name,$txt);
@@ -1576,7 +1576,7 @@ switch ($aktion) {
 					"FROM raum,online WHERE o_raum=r_id ".
 					"AND r_name='$lobby' ".
 					"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ";
-				$result2=mysql_query($query2,$conn);
+				$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 				if ($result2 && mysql_num_rows($result2)>0) {
 
@@ -1594,7 +1594,7 @@ switch ($aktion) {
 						"AND r_name!='$lobby' ".
 						"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ".
 						"GROUP BY r_id HAVING anzahl=1 AND (CADMIN=1 OR SADMIN=1)";
-					$result2=mysql_query($query2,$conn);
+					$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					$anzahl=mysql_num_rows($result2);
 					if ($result2 && $anzahl==1) {
 						$eintritt=mysql_result($result2,0,"r_id");
@@ -1610,7 +1610,7 @@ switch ($aktion) {
 				// ID der Lobby neu ermitteln -> Login in Lobby
 				if ($login_in_lobby) {
 					$query2="SELECT r_id FROM raum WHERE r_name = '$eintrittsraum' ";
-					$result2=mysql_query($query2,$conn);
+					$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					if ($result2 && mysql_num_rows($result2)==1) {
 						$eintritt=mysql_result($result2,0,"r_id");
 					};
@@ -1619,7 +1619,7 @@ switch ($aktion) {
 
 				// Bei Login dieses Users alle Admins (online, nicht Temp) informieren
 				$query2="SELECT r_name from raum where r_id=$eintritt";
-				$result2=mysql_query($query2,$conn);
+				$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result2 AND mysql_num_rows($result2)>0) {
 					$raumname=mysql_result($result2,0,0);
 				} else {
@@ -1628,7 +1628,7 @@ switch ($aktion) {
 				mysql_free_result($result2);
 
 				$query2="SELECT o_user FROM online WHERE (o_level='S' OR o_level='C')";
-				$result2=mysql_query($query2,$conn);
+				$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result2 AND mysql_num_rows($result2)>0) {
 					$txt=str_replace("%raumname%",$raumname,$t['default7']);
 					while ($row2=mysql_fetch_object($result2)) {
@@ -1930,7 +1930,7 @@ switch ($aktion) {
 		$query="SELECT u_id FROM user ".
 			"WHERE u_nick = '".$f['u_nick']."' ";
 
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_num_rows($result);
 	
 		if ($rows!=0):
@@ -1989,7 +1989,7 @@ switch ($aktion) {
                 if ($begrenzung_anmeld_pro_mailadr > 0)
                 {
                         $query="select u_id from user WHERE u_adminemail = '$f[u_adminemail]'";
-                        $result=mysql_query($query);
+                        $result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
                         $num=mysql_numrows($result);
                         if ($num >= $begrenzung_anmeld_pro_mailadr) 
                         {  
@@ -2066,12 +2066,12 @@ switch ($aktion) {
 
 			$f['u_level']="U";
 			$u_id=schreibe_db("user",$f,"","u_id");
-			$result=mysql_query("UPDATE user SET u_neu=DATE_FORMAT(now(),\"%Y%m%d%H%i%s\") WHERE u_id=$u_id",$conn);
+			$result=mysql_query("UPDATE user SET u_neu=DATE_FORMAT(now() or trigger_error(mysql_error(), E_USER_ERROR),\"%Y%m%d%H%i%s\") WHERE u_id=$u_id",$conn);
 
 			if ($pruefe_email == "1")
 			{
 			$query="DELETE FROM mail_check WHERE email = '$f[u_adminemail]'";
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			#print "DEBUG: lösche mailadresse aus mail_check";
 			}
 
@@ -2117,7 +2117,7 @@ switch ($aktion) {
 
 	// Falls user eigene Einstellungen für das Frameset hat -> überschreiben
         $sql = "select u_frames from user where u_id = $u_id";
-        $result = mysql_query($sql, $conn);
+        $result = mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)>0) {
 	        $u_frames = mysql_result($result,0,"u_frames");
 	};
@@ -2246,7 +2246,7 @@ Bei Problemen hilft Euch das mainChat Team natürlich gerne weiter.<br><br>
 
 		// Wie viele User sind in der DB?
 		$query="SELECT count(u_id) FROM user WHERE u_level in ('A','C','G','M','S','U')";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_num_rows($result);
 		if ($result) {
 			$useranzahl=mysql_result($result,0,0);
@@ -2259,7 +2259,7 @@ Bei Problemen hilft Euch das mainChat Team natürlich gerne weiter.<br><br>
 			"FROM online left join raum on o_raum=r_id  ".
 			"WHERE (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ".
 			"ORDER BY lobby desc,r_name,o_who,o_name ";
-		$result2=mysql_query($query,$conn);
+		$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result2)
 			$onlineanzahl=mysql_num_rows($result2);
 		// Anzahl der angemeldeten User ausgeben
@@ -2272,7 +2272,7 @@ Bei Problemen hilft Euch das mainChat Team natürlich gerne weiter.<br><br>
 			{
 				// Anzahl Themen
 				$query="select count(th_id) from thema";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result AND mysql_num_rows($result)>0) 
 				{
 					$themen=mysql_result($result,0,0);
@@ -2281,7 +2281,7 @@ Bei Problemen hilft Euch das mainChat Team natürlich gerne weiter.<br><br>
 				
 				// Dummy Themen abziehen
 				$query="select count(th_id) from thema where th_name = 'dummy-thema'";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result AND mysql_num_rows($result)>0) 
 				{
 					$themen = $themen - mysql_result($result,0,0);
@@ -2290,7 +2290,7 @@ Bei Problemen hilft Euch das mainChat Team natürlich gerne weiter.<br><br>
 
 				// Anzahl Postings 
 				$query="select count(po_id) from posting";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result AND mysql_num_rows($result)>0) {
 					$beitraege=mysql_result($result,0,0);
 					mysql_free_result($result);

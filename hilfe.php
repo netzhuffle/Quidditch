@@ -53,7 +53,7 @@ aktualisiere_online($u_id,$o_raum);
 if ($erweitertefeatures) {
 
 	$query="SELECT r_werbung FROM raum WHERE r_id=$o_raum ";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result && mysql_Num_Rows($result)!=0) {
 		$txt=mysql_result($result,0,0);

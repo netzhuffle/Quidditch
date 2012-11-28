@@ -13,7 +13,7 @@ function erzeuge_sequence ($db,$id) {
 	global $dbase,$conn;
 
 	$query="select se_nextid from sequence where se_name='$db'";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if (!($result && mysql_num_rows($result)==1)):
 
 		// Tabelle neu anlegen
@@ -21,26 +21,26 @@ function erzeuge_sequence ($db,$id) {
 			"se_name varchar(127) NOT NULL default '',".
 			"se_nextid int(10) unsigned NOT NULL default '0',".
 			"PRIMARY KEY (se_name));";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		// Sperren
 		$query="LOCK  TABLES $db,sequence WRITE";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		// Höchste ID lesen
 		$query="select max($id) from $db";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) $temp=mysql_result($result,0,0)+1;
 		if ($temp=="NULL" || !$temp) $temp=0;
 
 		// ID eintragen
 		$query="INSERT INTO sequence (se_name,se_nextid) VALUES ('$db','$temp')";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if (!$result) echo mysql_errno() . " - " . mysql_error();
 
 		// Sperre aufheben
 		$query="UNLOCK TABLES";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	endif;
 	@mysql_free_result($result);
@@ -169,13 +169,13 @@ unset($http_stuff['PHP_AUTH_PW']);
 // Aktionen initialisieren, nicht für Gäste
 if ($u_level!="G" && $communityfeatures) {
 	$query="select a_id FROM aktion WHERE a_user=$u_id ";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && (mysql_num_rows($result)==0 || mysql_num_rows($result)>20)) {
-		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Sofort/Online',	a_was='Freunde',	a_wie='OLM'", $conn);
-		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Login',		a_was='Freunde',	a_wie='OLM'", $conn);
-		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Sofort/Online',	a_was='Neue Mail',	a_wie='OLM'", $conn);
-		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Login',		a_was='Neue Mail',	a_wie='OLM'", $conn);
-		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Alle 5 Minuten',	a_was='Neue Mail',	a_wie='OLM'", $conn);
+		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Sofort/Online',	a_was='Freunde',	a_wie='OLM'", $conn) or trigger_error(mysql_error(), E_USER_ERROR);
+		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Login',		a_was='Freunde',	a_wie='OLM'", $conn) or trigger_error(mysql_error(), E_USER_ERROR);
+		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Sofort/Online',	a_was='Neue Mail',	a_wie='OLM'", $conn) or trigger_error(mysql_error(), E_USER_ERROR);
+		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Login',		a_was='Neue Mail',	a_wie='OLM'", $conn) or trigger_error(mysql_error(), E_USER_ERROR);
+		mysql_query("INSERT INTO aktion set a_user=$u_id, a_text='$u_name', a_wann='Alle 5 Minuten',	a_was='Neue Mail',	a_wie='OLM'", $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	};
 	mysql_free_result($result);
 };
@@ -183,7 +183,7 @@ if ($u_level!="G" && $communityfeatures) {
 // Prüfen, ob User noch online ist und ggf. ausloggen
 $alteloginzeit="";
 $query="select o_id, o_login FROM online WHERE o_user=$u_id ";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if ($result  && mysql_num_rows($result)!=0) 
 {
 	$alteloginzeit=mysql_result($result,0,1);
@@ -196,7 +196,7 @@ if ($result  && mysql_num_rows($result)!=0)
 
 // Login als letzten Login merken, dabei away und loginfehler zurücksetzen.
 $query="UPDATE user SET u_login=NOW(),u_away='',u_loginfehler='' WHERE u_id=$u_id";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if (!$result):
 	echo "Fehler beim Login: $query<BR>";
 	exit;
@@ -269,7 +269,7 @@ endif;
 // Aktuelle Daten des Users aus Tabelle iignore lesen
 // Query muss mit Code in ignore übereinstimmen
 $query="SELECT i_user_passiv FROM iignore WHERE i_user_aktiv=$u_id";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if (!$result):
 	echo "Fehler beim Login (iignore): $query<BR>";
 	exit;
@@ -291,7 +291,7 @@ $query="SELECT u_id,u_name,u_nick,u_level,u_farbe,u_zeilen,u_backup,u_farbe_bg,"
 	"u_away,u_email,u_adminemail,u_smilie,u_punkte_gesamt,u_punkte_gruppe,".
 	"u_chathomepage,u_systemmeldungen,u_punkte_anzeigen ".
 	"FROM user WHERE u_id=$u_id";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if (!$result):
 	echo "Fehler beim Login: $query<BR>";
 	exit;
@@ -316,7 +316,7 @@ else:
 	
 	// Hole Knebelzeit aus Usertabelle
 	$query="SELECT u_knebel FROM user WHERE u_id=$u_id";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) 
 	{
 		$row=mysql_fetch_object($result);
@@ -331,9 +331,9 @@ endif;
 
 // Tabellen online+user exklusiv locken
 $query="LOCK   TABLES online WRITE, user WRITE";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 $query="DELETE FROM online WHERE o_user=$u_id";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 // User in in Tabelle online merken -> User ist online
 unset($f);
@@ -371,11 +371,11 @@ if ($alteloginzeit!="")
 { $query="UPDATE online SET o_aktiv=NULL, o_login='$alteloginzeit', o_knebel='$knebelzeit', o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' WHERE o_user=$u_id "; }
 else
 { $query="UPDATE online SET o_aktiv=NULL, o_login=NULL, o_knebel='$knebelzeit', o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' WHERE o_user=$u_id "; }
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 // Lock freigeben
 $query="UNLOCK TABLES";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 
 // Bei Admins Cookie setzen zur Überprüfung der Session
@@ -413,7 +413,7 @@ endif;
 // geschlossener Raum betreten werden
 if (strlen($raum)>0) {
 	$query4711="SELECT r_id,r_status1,r_besitzer,r_name,r_min_punkte FROM raum WHERE r_id=$raum";
-	$result=mysql_query($query4711, $conn);
+	$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)>0){
 		$rows=mysql_fetch_object($result);
 		$r_min_punkte = $rows->r_min_punkte;
@@ -426,7 +426,7 @@ if (strlen($raum)>0) {
 
 				// es sei denn, man ist dorthin eingeladen
 				$query2911="SELECT inv_user FROM invite WHERE inv_raum=$rows->r_id AND inv_user=$u_id";
-				$result2911=mysql_query($query2911, $conn);
+				$result2911=mysql_query($query2911, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result2911>0)
 				{
 					if (mysql_num_rows($result2911)>0) $raumeintritt=true;
@@ -459,7 +459,7 @@ if (strlen($raum)>0):
 	// Prüfung ob User aus Raum ausgesperrt ist
 
 	$query4711="SELECT s_id FROM sperre WHERE s_raum=$raum AND s_user=$u_id";
-	$result=mysql_query($query4711, $conn);
+	$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result>0) 
 	{
 
@@ -479,7 +479,7 @@ if (strlen($raum)>0):
 				            "WHERE r_status1 = 'O' and r_status2 = 'P' and r_min_punkte <= $u_punkte_gesamt ".
 					    "and s_id is NULL ".
 					    "ORDER BY r_id ";
-				$result1222b=mysql_query($query1222b, $conn);
+				$result1222b=mysql_query($query1222b, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if (($result1222b > 0) && (mysql_num_rows($result1222b) > 0))
 				{
 					// Es gibt Räume, für die man noch nicht gesperrt ist.
@@ -501,14 +501,14 @@ if (strlen($raum)==0){
 	// Id des Eintrittsraums als Voreinstellung ermitteln
 	$query4711="SELECT r_id,r_name,r_eintritt,r_topic ".
 			"FROM raum WHERE r_name='$eintrittsraum' ";
-	$result=mysql_query($query4711, $conn);
+	$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result) $rows=mysql_Num_Rows($result);
 
 	// eintrittsraum nicht gefunden? -> lobby probieren.
 	if ($rows==0) {
 		$query4711="SELECT r_id,r_name,r_eintritt,r_topic ".
 				"FROM raum WHERE r_name='$lobby' ";
-		$result=mysql_query($query4711, $conn);
+		$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result) $rows=mysql_Num_Rows($result);
 	}
 	// lobby  nicht gefunden? --> lobby anlegen.
@@ -517,11 +517,11 @@ if (strlen($raum)==0){
 		$query4711="INSERT INTO raum ".
 			"(r_id,r_name,r_eintritt,r_austritt,r_status1,r_besitzer,r_topic,r_status2,r_smilie) ".
 			"VALUES (0,'$lobby','Willkommen','','O',1,'Eingangshalle','P','')";
-		$result=mysql_query($query4711, $conn);
+		$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		// neu lesen.
 		$query4711="SELECT r_id,r_name,r_eintritt,r_topic ".
 				"FROM raum WHERE r_name='$lobby' ";
-		$result=mysql_query($query4711, $conn);
+		$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result) $rows=mysql_Num_Rows($result);
 	}
 
@@ -530,7 +530,7 @@ if (strlen($raum)==0){
 	// Gewählten Raum ermitteln
 	$query4711="SELECT r_id,r_name,r_eintritt,r_topic ".
 			"FROM raum WHERE r_id=$raum ";
-	$result=mysql_query($query4711, $conn);
+	$result=mysql_query($query4711, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result) $rows=mysql_Num_Rows($result);
 
 }
@@ -630,7 +630,7 @@ if ($communityfeatures) {
 	       "SELECT f_id,f_text,f_userid,f_freundid,f_zeit FROM freunde WHERE f_freundid=$u_id AND f_status = 'bestaetigt' ".
 	       "ORDER BY f_zeit desc "; 
 
-        $result=mysql_query($query, $conn);
+        $result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
         if ($result && mysql_num_rows($result)>0) {
 
@@ -705,7 +705,7 @@ function betrete_forum($o_id,$u_id,$u_name,$u_level) {
 	           "UNION ".
 	           "SELECT f_id,f_text,f_userid,f_freundid,f_zeit FROM freunde WHERE f_freundid=$u_id AND f_status = 'bestaetigt' ".
 	           "ORDER BY f_zeit desc "; 
-            $result=mysql_query($query, $conn);
+            $result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
             if ($result && mysql_num_rows($result)>0) {
 
@@ -826,7 +826,7 @@ function RaumNameToRaumID($eintrittsraum) {
 	$lobby_id = False;
 	$eintrittsraum=addslashes($eintrittsraum);
 	$query="SELECT r_id FROM raum WHERE r_name = '$eintrittsraum' ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) {
 		$lobby_id=mysql_result($result,0,"r_id");
 	}
@@ -843,7 +843,7 @@ function getsalt($feldname, $login) {
 
 	$salt = "-9";
 	$query="SELECT u_passwort FROM user WHERE $feldname = '$login' ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result && mysql_num_rows($result)==1)
 	{
@@ -1026,7 +1026,7 @@ function auth_user($feldname,$login,$passwort) {
                 $query = "SELECT * ".
                          "FROM user WHERE $feldname = '$login' ".
                          "AND u_passwort='".addslashes($v_passwort)."'";
-        	$result=mysql_query($query,$conn);
+        	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
         	if ($result && mysql_num_rows($result)==1)
         	{
         		$usergefunden = mysql_result($result,0,"u_id");
@@ -1045,7 +1045,7 @@ function auth_user($feldname,$login,$passwort) {
 
 			// Neues PW ist nicht bekannt aber lt. oben richtig, daher neues $result erzeugen
 	                $query = "SELECT * FROM user WHERE u_id = $usergefunden ";
-	        	$result=mysql_query($query,$conn);
+	        	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
         		return($result);
 		} 	
 		else 

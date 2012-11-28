@@ -85,7 +85,7 @@ if ($u_id && $communityfeatures) {
 	// Prüfung, ob für diesen user bereits ein profil vorliegt -> in $f lesen und merken
 	// Falls Array aus Formular übergeben wird, nur ui_id überschreiben
 	$query="SELECT * FROM userinfo WHERE ui_userid=$u_id";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)!=0) {
 		if (!isset($f) || !is_array($f)) { 
 			$f=mysql_fetch_array($result);
@@ -236,7 +236,7 @@ if ($u_id && $communityfeatures) {
 				"<TR><TH>Nick</TH><TH>Username</TH><TH>Straße</TH><TH>PLZ Ort</TH><TH>Land</TH><TH>Admin-EMail</TH><TH>E-Mail</TH><TH>URL</TH><TH>Geburt</TH><TH>Geschlecht</TH><TH>Fam. Stand</TH><TH>Typ</TH><TH>Beruf</TH><TH>Hobby</TH><TH>Tel</TH><TH>Fax</TH><TH>Handy</TH><TH>ICQ</TH></TR>";
 
 			$query="SELECT * FROM user,userinfo WHERE ui_userid=u_id order by u_nick,u_name";
-			$result=mysql_query($query, $conn);
+			$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_num_rows($result)>0) {
 				while ($row=mysql_fetch_object($result)) {
 					echo "<TR><TD><B>".htmlspecialchars(stripslashes($row->u_nick))."</B></TD><TD>".

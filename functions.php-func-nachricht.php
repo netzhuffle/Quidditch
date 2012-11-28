@@ -23,7 +23,7 @@ if ($lustigefeatures)
 if ($eintritt_individuell == "1")
 {
 	$query="SELECT u_eintritt FROM user where u_id = $u_id";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$row=mysql_fetch_object($result);
 	if (strlen($row->u_eintritt)>0)
 	{
@@ -55,7 +55,7 @@ if (raum_ist_moderiert($r_id)) {
 	// Spamschutz, verhindert die Eintrittsmeldung, wenn innerhalb von 60 Sek mehr als 15 Systemmiteilungen eingehen...
 
 	$sql="SELECT count(c_id) as nummer FROM chat WHERE c_von_user = '' and c_typ='S' and c_raum ='$r_id' and c_zeit > '".date("YmdHis",date("U")-60)."'";
-	$result=mysql_query($sql);
+	$result=mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
 	$num=mysql_fetch_array($result);
 	$num=$num['nummer'];
 	if ($num < 15)
@@ -88,7 +88,7 @@ if ($lustigefeatures)
 if ($eintritt_individuell == "1")
 {
         $query="SELECT u_austritt FROM user where u_nick = '$u_name'";
-        $result=mysql_query($query);
+        $result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
         $row=mysql_fetch_object($result);
         if (strlen($row->u_austritt)>0)  
         {

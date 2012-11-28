@@ -17,7 +17,7 @@ global $raum_eintrittsnachricht_kurzform, $raum_austrittsnachricht_kurzform;
 $query="SELECT r_name,r_status1,r_austritt,r_min_punkte from raum ".
 	"WHERE r_id=$raum_alt ";
 
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
                 
 if ($result && mysql_num_rows($result)==1):
 	$alt=mysql_fetch_object($result);
@@ -28,7 +28,7 @@ endif;
 
 // Ist User aus dem Raum ausgesperrt?
 $query="SELECT s_id FROM sperre WHERE s_raum=$raum_neu AND s_user=$u_id";
-$result=@mysql_query($query, $conn);
+$result=@mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 $rows=@mysql_Num_Rows($result);
 if ($rows==0):
 	$gesperrt=0;
@@ -42,7 +42,7 @@ endif;
 $query="SELECT * from raum ".
 	"WHERE r_id=$raum_neu ";
 
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 if ($result && mysql_num_rows($result)==1):
 	$neu=mysql_fetch_object($result);
@@ -53,7 +53,7 @@ if ($result && mysql_num_rows($result)==1):
 	if ($erweitertefeatures == 1)
 	{
 		$query2="SELECT o_punkte FROM online WHERE o_id=$o_id ";	
-		$result2=mysql_query($query2, $conn);
+		$result2=mysql_query($query2, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		if ($result2 && mysql_num_rows($result2)==1)
 		{
@@ -87,7 +87,7 @@ if ($result && mysql_num_rows($result)==1):
 	if ($neu->r_status1=="G" || $neu->r_status1=="M" || $zuwenigpunkte == 1) {
 		// Raum geschlossen. nur rein, wenn auf invite liste.
 		$query="SELECT inv_user FROM invite WHERE inv_raum=$neu->r_id AND inv_user=$u_id";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result>0) {
 			if (mysql_num_rows($result)>0) $raumwechsel=true;
 			mysql_free_result($result);
@@ -125,7 +125,7 @@ if ($result && mysql_num_rows($result)==1):
 			"AND r_id=$raum_neu ".
 			"GROUP BY r_id HAVING anzahl=1 AND (CADMIN=1 OR SADMIN=1) OR LOBBY OR STATUS";
 		// system_msg("",0,$u_id,"","DEBUG $query");
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		if ($result && mysql_num_rows($result)==1) {
 			$raumwechsel=TRUE;
@@ -150,7 +150,7 @@ if ($result && mysql_num_rows($result)==1):
 		$query="UPDATE online SET o_raum=$raum_neu ".
 			"WHERE o_user=$u_id ".
 			"AND   o_raum=$raum_alt";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		// Austrittstext
 		if($t['raum_gehe1']) {
@@ -187,7 +187,7 @@ if ($result && mysql_num_rows($result)==1):
 		if (($forumfeatures) && ($communityfeatures) && (!$beichtstuhl) && (($neu->r_status1 == "L") || ($alt->r_status1 == "L")) && ($u_level!="A") && (!$admin))
 		{
 			$query2="SELECT o_hash, o_vhost FROM online WHERE o_id=$o_id ";	
-			$result2=mysql_query($query2, $conn);
+			$result2=mysql_query($query2, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 			if ($result2 && mysql_num_rows($result2)==1)
 			{

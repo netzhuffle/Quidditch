@@ -106,7 +106,7 @@ if (isset($u_id) && $u_id):
 		"AND o_id=$o_id ".
 		"ORDER BY o_aktiv DESC";
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result && mysql_Num_Rows($result)!=0):
 		$row=mysql_fetch_object($result);
@@ -142,7 +142,7 @@ if (isset($u_id) && $u_id):
 	// Anzahl der User insgesamt feststellen
 	$query="SELECT count(o_id) as anzahl FROM online ".
 		"WHERE (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_Num_Rows($result)!=0):
 		$anzahl_gesamt=mysql_result($result,0,"anzahl");
 		mysql_free_result($result);
@@ -153,7 +153,7 @@ if (isset($u_id) && $u_id):
 	$query="SELECT count(o_id) as anzahl FROM online ".
 		"WHERE o_raum=$o_raum AND ".
 		"(UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_Num_Rows($result)!=0):
 		$anzahl_raum=mysql_result($result,0,"anzahl");
 		mysql_free_result($result);
@@ -197,7 +197,7 @@ if (isset($u_id) && $u_id):
 
 	// Special: Bei nur einem Raum kein Auswahl
 	$query="SELECT count(*) as zahl FROM raum";
-	$result=mysql_query($query);
+	$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	$a=mysql_fetch_array($result);
 	$zahl=$a['zahl'];
 

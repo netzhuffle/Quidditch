@@ -27,7 +27,7 @@ function zeige_aktionen($aktion) {
 		"<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>";
 
 	// Einstellungen aus Datenbank lesen 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)>0) {
 		while($row=mysql_fetch_array($result)) {
 			$was[$row['a_was']][$row['a_wann']]=$row;
@@ -43,7 +43,7 @@ function zeige_aktionen($aktion) {
 
 	// Alle möglichen a_wann in Array lesen
 	$query="SHOW COLUMNS FROM aktion like 'a_wann'";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)!=0) {
 		$txt=str_replace("'","",substr(mysql_result($result,0,"Type"),5,-1));
 		$a_wann=explode(",",$txt);
@@ -52,7 +52,7 @@ function zeige_aktionen($aktion) {
 
 	// Alle möglichen a_wie in Array lesen
 	$query="SHOW COLUMNS FROM aktion like 'a_wie'";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)!=0) {
 		$txt=str_replace("'","",substr(mysql_result($result,0,"Type"),4,-1));
 		$a_wie=explode(",",$txt);
@@ -164,7 +164,7 @@ function eintrag_aktionen($aktion_datensatz) {
 
 	// Alle möglichen a_wann in Array lesen
 	$query="SHOW COLUMNS FROM aktion like 'a_wann'";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)!=0) {
 		$txt=str_replace("'","",substr(mysql_result($result,0,"Type"),5,-1));
 		$a_wann=explode(",",$txt);
@@ -182,7 +182,7 @@ function eintrag_aktionen($aktion_datensatz) {
 					"WHERE a_was='$def_was_eintrag' ".
 					"AND a_wann='$a_wann_eintrag' ".
 					"AND a_user='$u_id'";
-				$result=mysql_query($query, $conn);
+				$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			};
 		
 			$f['a_wie']=$temp[1];

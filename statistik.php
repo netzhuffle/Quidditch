@@ -67,7 +67,7 @@ if (!$c) {
     $msg=$t['statistik4'];
 } else {
     //testen, ob statisiken überhaupt geschrieben werden:
-    $r1 = mysql_query("SELECT DISTINCT c_host FROM chat WHERE c_host LIKE '$v' ORDER BY c_host");
+    $r1 = mysql_query("SELECT DISTINCT c_host FROM chat WHERE c_host LIKE '$v' ORDER BY c_host") or trigger_error(mysql_error(), E_USER_ERROR);
     if ($r1>0) {
         if (mysql_num_rows($r1)==0) {
             // host taucht nicht auf... nix wars.
@@ -165,7 +165,7 @@ switch($type) {
 
         // Statistiken einzeln nach Monaten//{{{
 
-        $r1 = @mysql_query("SELECT DISTINCT c_host FROM chat WHERE date(c_timestamp) LIKE '$y-$m%' AND c_host LIKE '$v' ORDER BY c_host");
+        $r1 = @mysql_query("SELECT DISTINCT c_host FROM chat WHERE date(c_timestamp) or trigger_error(mysql_error(), E_USER_ERROR) LIKE '$y-$m%' AND c_host LIKE '$v' ORDER BY c_host");
         if ($r1 > 0)
         {
             $j = 0;
@@ -177,7 +177,7 @@ switch($type) {
 
                 statsResetMonth($y, $m);
         
-                $r0 = @mysql_query("SELECT *, DATE_FORMAT(c_timestamp,'%d') as tag FROM chat WHERE date(c_timestamp) LIKE '$y-$m%' AND c_host='" . AddSlashes($c_host) . "' ORDER BY c_timestamp");
+                $r0 = @mysql_query("SELECT *, DATE_FORMAT(c_timestamp,'%d') or trigger_error(mysql_error(), E_USER_ERROR) as tag FROM chat WHERE date(c_timestamp) LIKE '$y-$m%' AND c_host='" . AddSlashes($c_host) . "' ORDER BY c_timestamp");
                 if ($r0 > 0)
                 {
                     $i = 0;
@@ -212,7 +212,7 @@ switch($type) {
 
             statsResetHours($showtime, $h);
 
-            $r0 = @mysql_query("SELECT *, DATE_FORMAT(c_timestamp,'%k') as stunde FROM chat WHERE UNIX_TIMESTAMP(c_timestamp)>$showtime AND c_host LIKE '$v' ORDER BY c_timestamp");
+            $r0 = @mysql_query("SELECT *, DATE_FORMAT(c_timestamp,'%k') or trigger_error(mysql_error(), E_USER_ERROR) as stunde FROM chat WHERE UNIX_TIMESTAMP(c_timestamp)>$showtime AND c_host LIKE '$v' ORDER BY c_timestamp");
 
             if ($r0 > 0)
             {

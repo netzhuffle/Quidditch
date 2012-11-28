@@ -82,7 +82,7 @@ switch ($aktion)
 					mysql_set_charset("utf8");
 					if (!$select=mysql_select_db ($chat['dbase'],$connect))
 					{
-						if (!$create_db=mysql_query("CREATE DATABASE $chat[dbase]",$connect))
+						if (!$create_db=mysql_query("CREATE DATABASE $chat[dbase]",$connect) or trigger_error(mysql_error(), E_USER_ERROR))
 						{
 		             				echo "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\" align=\"center\">\n".
 			             	     		     "<tr bgcolor=\"#007ABE\"><td colspan=\"2\" style=\"font-size:15px; text-align:center;color:White;\"><B>FEHLER</b></td></tr>\n".

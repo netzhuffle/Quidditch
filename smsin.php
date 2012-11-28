@@ -14,7 +14,7 @@ function HoleNick($handynummer)
 
 $query="SELECT user.u_id, user.u_nick,u_login FROM user, userinfo WHERE user.u_id=userinfo.ui_userid AND ui_handy='$handynummer' order by u_login desc limit 0,1";
 #print $query;
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $nick="";
 if (mysql_numrows($result) == "1") 
 				{
@@ -33,7 +33,7 @@ return($nick);
 if ($timestamp && $smstext && $nummer && $keyword && $shortnumber)
 			{
 			$query="INSERT INTO smsin (s_timestamp,  s_text, s_handynummer,s_keyword,s_shortnumber) VALUES ('$timestamp','$smstext','$nummer','$keyword','$shortnumber')";
-			mysql_query($query);
+			mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			print mysql_error();
 			print "OK!<BR><HR>";
 

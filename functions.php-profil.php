@@ -31,7 +31,7 @@ if (!isset($f['ui_typ'])) $f['ui_typ']="";
 
 // Userdaten lesen
 $query="SELECT * FROM user WHERE u_id=$u_id";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if ($result && mysql_num_rows($result)==1) {
 	$userdata=mysql_fetch_array($result);
 	mysql_free_result($result);

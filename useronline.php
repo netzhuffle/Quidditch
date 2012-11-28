@@ -11,7 +11,7 @@ $userliste="";
 $user_im_raum=0;
 
 $query="SELECT count(u_id) as anzahl_user from user";
-$result=@mysql_query($query, $conn);
+$result=@mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	
 if ($result && mysql_Num_Rows($result)>0){
 	$anzahl_user=mysql_result($result,0,0);
@@ -20,7 +20,7 @@ if ($result && mysql_Num_Rows($result)>0){
 
 $query="SELECT count(o_id) as anzahl_online FROM online ".
 	"WHERE (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout";
-$result=@mysql_query($query, $conn);
+$result=@mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	
 if ($result && mysql_Num_Rows($result)>0){
 	$anzahl_online=mysql_result($result,0,0);
@@ -33,7 +33,7 @@ $query="SELECT o_name,r_name,UNIX_TIMESTAMP(o_aktiv) as login FROM raum,online "
 	"AND r_status2='P' ".
 	"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ".
 	"ORDER BY r_name,o_name ";
-$result=@mysql_query($query, $conn);
+$result=@mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	
 if ($result && mysql_Num_Rows($result)>0){
 	while ($row=@mysql_fetch_object($result)){

@@ -13,7 +13,7 @@ id_lese($id);
 $query="SELECT r_name,r_status1,r_austritt from raum ".
         "WHERE r_id=$o_raum ";
 
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 if ($result && mysql_num_rows($result)==1):
         $alt=mysql_fetch_object($result);
@@ -79,7 +79,7 @@ if (isset($frame_online) && strlen($frame_online)==0) {
 
 // Falls user eigene Einstellungen für das Frameset hat -> überschreiben
 $sql = "select u_frames from user where u_id = $u_id";
-$query = mysql_query($sql, $conn);
+$query = mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 $u_frames = mysql_result($query,0,"u_frames");
 if ($u_frames) {
         $u_frames = unserialize($u_frames);

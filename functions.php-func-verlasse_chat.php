@@ -18,7 +18,7 @@ if ($raum && $u_id)
 	if ($eintritt_individuell == "1")
 	{
 	        $query="SELECT u_austritt FROM user where u_id = $u_id";
-        	$result=mysql_query($query);
+        	$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
       		$row=mysql_fetch_object($result);
         	if (strlen($row->u_austritt)>0)
         	{
@@ -31,7 +31,7 @@ if ($raum && $u_id)
         	mysql_free_result($result);
 
 	        $query="SELECT r_name FROM raum where r_id = $raum";
-        	$result=mysql_query($query);
+        	$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
       		$row=mysql_fetch_object($result);
 		if (isset($row->r_name)) 
 		{

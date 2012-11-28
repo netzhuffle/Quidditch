@@ -17,7 +17,7 @@ function show_pfad_posting2($th_id) {
                 from forum, thema
                 where th_id = $th_id
                 and fo_id = th_fo_id";
-        $query = mysql_query($sql, $conn);
+        $query = mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
         $fo_id = htmlspecialchars(stripslashes(mysql_result($query,0,"fo_id")));
         $fo_name = htmlspecialchars(stripslashes(mysql_result($query,0,"fo_name")));
         $th_name = htmlspecialchars(stripslashes(mysql_result($query,0,"th_name")));
@@ -30,7 +30,7 @@ function show_pfad_posting2($th_id) {
 function vater_rekursiv($vater)
 {
     $query="SELECT po_id, po_vater_id FROM posting WHERE po_id = $vater";
-    $result=mysql_query($query);
+    $result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
     $a=mysql_fetch_array($result);
     if (mysql_num_rows($result) <> 1)
     {
@@ -80,7 +80,7 @@ function such_bereich()
 	$sql = "SELECT fo_id, fo_admin, fo_name, th_id, th_name FROM forum left join thema on fo_id = th_fo_id ".
 	       "WHERE th_anzthreads <> 0 ".
 	       "ORDER BY fo_order, th_order ";
-	$query=mysql_query($sql, $conn);
+	$query=mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$themaalt="";
 	echo "<OPTION "; if (substr($suche['thema'],0,1)<>"B") echo "SELECTED "; echo "VALUE=\"ALL\">$t[option1]</OPTION>";
 	while ($thema=mysql_fetch_array($query, MYSQL_ASSOC))
@@ -161,7 +161,7 @@ function such_ergebnis()
         $titel=$t['ergebnis1'];
 
         $sql = "select u_gelesene_postings from user where u_id=$u_id";
-        $query = mysql_query($sql, $conn);
+        $query = mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
         if (mysql_num_rows($query)>0)
                 $gelesene = mysql_result($query,0,"u_gelesene_postings");
         $u_gelesene = unserialize($gelesene);
@@ -174,7 +174,7 @@ function such_ergebnis()
 	if (strlen($fehler)==0 && $suche['username'] <> "") 
 	{
 		$sql = "SELECT u_id FROM user where u_nick = \"".$suche['username']."\"";
-		$query=mysql_query($sql, $conn);
+		$query=mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if (mysql_num_rows($query) == 1)
 		{
 			$suche['u_id']=mysql_result($query, 0, "u_id");
@@ -276,7 +276,7 @@ function such_ergebnis()
 		$sql2 = "SELECT fo_id, fo_admin, fo_name, th_id, th_name FROM forum left join thema on fo_id = th_fo_id ".
 		       "WHERE th_anzthreads <> 0 ".
 	     	       "ORDER BY fo_order, th_order ";
-		$query2=mysql_query($sql2, $conn);
+		$query2=mysql_query($sql2, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		while ($thema=mysql_fetch_array($query2, MYSQL_ASSOC))
 		{
 			if (pruefe_leserechte($thema['th_id']))
@@ -403,7 +403,7 @@ function such_ergebnis()
 
 		flush();
 		$sql = $sql . " " . $abfrage;
-		$query=mysql_query($sql, $conn);
+		$query=mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		$anzahl = mysql_num_rows($query);
 

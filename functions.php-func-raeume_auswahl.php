@@ -31,7 +31,7 @@ $query="SELECT r_id,count(o_id) as anzahl FROM raum ".
 	"GROUP BY r_id";
 
 // system_msg("",0,$u_id,"#000000","Debug: ".$query);
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 while ($row=mysql_fetch_object($result))
 	$anzahl_user[$row->r_id]=$row->anzahl;
 @mysql_free_result($result);
@@ -44,7 +44,7 @@ if ($forumfeatures && $communityfeatures && !$nur_chat) {
 		"WHERE o_who>1 ".
 		"GROUP BY o_who ";
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	while ($row=mysql_fetch_object($result))
 		$anzahl_who[$row->o_who]=$row->anzahl;
 	@mysql_free_result($result);
@@ -65,7 +65,7 @@ if (! $offen) {
 	# system_msg("",0,$u_id,"#000000","Debug: ".$query);
 
 	$rows=array();
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -77,7 +77,7 @@ if (! $offen) {
 		"WHERE r_status1='O' OR r_status1 like binary 'm' OR r_besitzer=$u_id OR r_id=$o_raum";
 	# system_msg("",0,$u_id,"#000000","Debug: ".$query);
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result){
 		while ($row=mysql_fetch_row($result)) {
 			$rows[]=$row[0];
@@ -95,7 +95,7 @@ if ($offen) {
 } else {
 	 return(1);
 };
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 # system_msg("",0,$u_id,"#000000","Debug: ".$query);
 
 echo $zusatz_select;

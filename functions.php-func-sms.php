@@ -50,7 +50,7 @@ if (! isset($fehler)) { if ($guthaben <= 0) { $fehler = "Du hast kein SMS-Guthab
 
 // Prüfen ob User SMS möchte
 $query="SELECT u_sms_ok FROM user WHERE u_id = '$an_user'";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $a=mysql_fetch_array($result);
 mysql_free_result($result);
 $sms_ok=$a['u_sms_ok'];
@@ -68,7 +68,7 @@ if ( isset($fehler) )
                 else
                 {
 		$query="SELECT u_nick FROM user WHERE u_id = '$an_user'";
-		$result=mysql_query($query);
+		$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		$emp2=mysql_fetch_array($result);
 		
                 sms_sende($von_user_id,$an_user,$complete);
@@ -84,7 +84,7 @@ if ( isset($fehler) )
 if ($von_user_id) {
         $query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
                 "WHERE o_user=$von_user_id";
-        $result=mysql_query($query,$conn);
+        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 };
 
 
@@ -112,7 +112,7 @@ if (pruefe_handynummer($handynummer) && $guthaben > 0)
                         $gw=$sms[gateway];
 			
 			$query="SELECT COUNT(*) as zahl FROM sms WHERE s_an_user_id = '$an_user'";	
-			$result=mysql_query($query);
+			$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 			$num=mysql_fetch_array($result);
 			if ($num[zahl] == 0)
 			{
@@ -186,7 +186,7 @@ global $sms,$dbase,$chat;
 function hole_smsguthaben($von_user_id)
 {
 $query="SELECT u_sms_guthaben FROM user WHERE u_id = '$von_user_id'";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $a=mysql_fetch_array($result);
 return($a['u_sms_guthaben']);
 }
@@ -194,7 +194,7 @@ return($a['u_sms_guthaben']);
 function hole_handynummer($user_id)
 {
 $query="SELECT ui_handy FROM userinfo WHERE ui_userid = '$user_id'";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $a=mysql_fetch_array($result);
 $handynr=$a['ui_handy'];
 return($handynr);

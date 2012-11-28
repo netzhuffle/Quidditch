@@ -46,7 +46,7 @@
 		$m = date("m", time());
 		$y = date("Y", time());	
 	
-		$r1 = @mysql_query("SELECT DISTINCT c_host FROM chat WHERE c_timestamp LIKE '$y$m%' AND c_host LIKE '$v' ORDER BY c_host");
+		$r1 = @mysql_query("SELECT DISTINCT c_host FROM chat WHERE c_timestamp LIKE '$y$m%' AND c_host LIKE '$v' ORDER BY c_host") or trigger_error(mysql_error(), E_USER_ERROR);
 
 		if ($r1 > 0)
 		{
@@ -68,7 +68,7 @@
 	
 					statsResetMonth($y, $m);
 			
-					$r0 = @mysql_query("SELECT * FROM chat WHERE c_timestamp LIKE '$y$m%' AND c_host='" . AddSlashes($c_host) . "' ORDER BY c_timestamp");
+					$r0 = @mysql_query("SELECT * FROM chat WHERE c_timestamp LIKE '$y$m%' AND c_host='" . AddSlashes($c_host) or trigger_error(mysql_error(), E_USER_ERROR) . "' ORDER BY c_timestamp");
 			
 					if ($r0 > 0)
 					{

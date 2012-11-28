@@ -191,7 +191,7 @@ if ($admin && isset($kick_user_chat) && $user) {
 	$query="SELECT o_id,o_raum,o_name FROM online ".
 		"WHERE o_user='$user' ".
 		"AND o_level!='C' AND o_level!='S' AND o_level!='A' ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result && mysql_num_rows($result)>0) 
 	{
@@ -250,7 +250,7 @@ case "userimport2":
 						$f['u_adminemail']=$userd[2];
 						$f['u_passwort']=$userd[3];
 				      		$query="SELECT u_id FROM user where u_nick like '$f[u_nick]'"; // User importieren
-						$result = mysql_query($query, $conn);
+						$result = mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 						if ($result && mysql_num_rows($result)) {
 							$ui_userid=mysql_result($result,0,0);
 							echo " ID: $ui_userid";
@@ -331,7 +331,7 @@ case "userloeschen2":
 
 
       		$query="DELETE FROM user where u_level != 'C' AND u_level != 'S'";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result) {
 			$ok=mysql_affected_rows()." ".$ok=$t['sonst52'];
 		} else {
@@ -360,7 +360,7 @@ case "zeigalle":
 			"date_format(u_login,'%d.%m.%y %H:%i') as login FROM user ".
 			"ORDER BY u_nick";
 
-		$result = mysql_query($query, $conn);
+		$result = mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows = mysql_num_rows($result);
 
 		if (!$result || mysql_num_rows($result)==0) {
@@ -583,7 +583,7 @@ case "suche":
 		}
 		$query .= $sortierung;
 	
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$anzahl=mysql_num_rows($result);
 		//echo '<br>'.$query.'<br>';
 
@@ -723,7 +723,7 @@ case "adminliste":
   	if ($adminlisteabrufbar && $u_level!="G")
   	{
 
-		$result=mysql_query('select * from user where u_level = "S" or u_level = "C" order by u_nick ',$conn);
+		$result=mysql_query('select * from user where u_level = "S" or u_level = "C" order by u_nick ',$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$anzahl=mysql_num_rows($result);
 
 		for($i=0; $row=mysql_fetch_array($result,MYSQL_ASSOC); $i++) {
@@ -782,7 +782,7 @@ default;
 
 		// Id der Lobby als Voreinstellung ermitteln
 		$query="SELECT r_id FROM raum WHERE r_name LIKE '$lobby' ";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_num_rows($result);
 
 		if ($rows>0) {
@@ -797,7 +797,7 @@ default;
 		 "WHERE (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout $raum_subquery ".
                	 "ORDER BY o_name";
 
-	$result = mysql_query($query,$conn);
+	$result = mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
         for($i=0; $row=mysql_fetch_array($result,MYSQL_ASSOC); $i++) {
 
@@ -876,7 +876,7 @@ default;
 	if ( !$rows && $schau_raum>0 ) {
 
 	        $query  = "SELECT r_name FROM raum WHERE r_id=$schau_raum ";
-		$result = mysql_query($query,$conn);
+		$result = mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)!=0) $r_name = mysql_result($result,0,0);
 		echo "<P>".str_replace("%r_name%",$r_name,$t['sonst13'])."</P>\n";
 

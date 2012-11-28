@@ -22,7 +22,7 @@ $query="SELECT o_name,r_name,UNIX_TIMESTAMP(o_aktiv) as login FROM raum,online "
 	"WHERE o_raum=r_id ".
 	"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ".
 	"ORDER BY r_name,o_user ";
-$result=@mysql_query($query,$conn);
+$result=@mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 $rows=@mysql_Num_Rows($result);
 	
 if ($rows>0){

@@ -42,7 +42,7 @@ function anzeige_umfragen_aktuell($adm = 0)
                                   " and um_start <= '".date('Y-m-d H:i:s')."'".
                                   " and um_ende >= '".date('Y-m-d H:i:s')."'".
                                   " order by um_bereich, um_start_umfrage, um_id ";
-    $result=mysql_query($query, $conn);
+    $result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
     if ($result) 
     {
         $anzahl = mysql_num_rows($result);
@@ -101,7 +101,7 @@ function anzeige_umfragen_zukuenftig($adm = 0)
                     "FROM umfrage WHERE um_start_umfrage >= '".date('Y-m-d H:i:s')."'".
                                  " and um_start <= '".date('Y-m-d H:i:s')."'".
                                  " order by um_bereich, um_start_umfrage, um_id ";
-    $result=mysql_query($query, $conn);
+    $result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
     if ($result) 
     {
         $anzahl = mysql_num_rows($result);
@@ -157,7 +157,7 @@ function anzeige_umfragen_abgeschlossen($adm = 0)
                     "FROM umfrage WHERE um_ende_umfrage <= '".date('Y-m-d H:i:s')."'".
                                   " and um_ende <= '".date('Y-m-d H:i:s')."'".
                                   " order by um_bereich, um_start_umfrage, um_id ";
-    $result=mysql_query($query, $conn);
+    $result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
     if ($result) 
     {
         $anzahl = mysql_num_rows($result);

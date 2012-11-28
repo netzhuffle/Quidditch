@@ -136,7 +136,7 @@ if (!isset($f['r_name'])) $f['r_name'] = "";
 if (!isset($neu)) $neu = false;
 
 $query="SELECT r_id, r_besitzer, r_name FROM raum WHERE r_id = '$f[r_id]'";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $num=mysql_numrows($result);
 if ($num == 1)
 {
@@ -147,7 +147,7 @@ if ($num == 1)
             
 // Gibt es den Raumnamen schon? Wenn ja dann Raum nicht speichern damit keine doppelten Raumnamen entstehen
 $query="SELECT r_id, r_besitzer FROM raum WHERE r_name = '$f[r_name]' AND r_id != '$f[r_id]'";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $num=mysql_numrows($result);
 if ($num >= 1) { $f['r_id']="";$f['f_name']="";}
 
@@ -172,7 +172,7 @@ if (strlen($f['r_name'])>3 && strlen($f['r_name'])<$raum_max && $los=="$t[sonst9
 	// gibts den Raum schon?
 	$query="SELECT r_id FROM raum ".
 		"WHERE r_name LIKE '$f[r_name]' ";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$rows=mysql_num_rows($result);
 
 	if ($rows==0):
@@ -241,7 +241,7 @@ case "loesch2":
 		"on r_besitzer=u_id ".
 		"WHERE r_id=$f[r_id] ";
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result AND mysql_num_rows($result)>0):
 
@@ -252,7 +252,7 @@ case "loesch2":
 
 			// Lobby suchen
 			$query="SELECT r_id FROM raum WHERE r_name='$lobby' ";
-			$result2=mysql_query($query, $conn);
+			$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result2 AND mysql_num_rows($result2)>0):
 				$lobby_id=mysql_result($result2,0,"r_id");
 			endif;
@@ -271,7 +271,7 @@ case "loesch2":
 				$query="SELECT o_user,o_name FROM online ".
 					"WHERE o_raum=$f[r_id] ";
 
-				$result2=mysql_query($query, $conn);
+				$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				while($row2=mysql_fetch_object($result2)):
 					system_msg("",0,$row2->o_user,$system_farbe,str_replace("%r_name%",$row->r_name,$t['fehler4']));
 					$oo_raum=raum_gehe($o_id,$row2->o_user,$row2->o_name,$f['r_id'],$lobby_id,FALSE);
@@ -281,12 +281,12 @@ case "loesch2":
 				@mysql_free_result($result2);
 
 				$query="DELETE FROM raum WHERE r_id=$f[r_id] ";
-				$result2=mysql_query($query, $conn);
+				$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				@mysql_free_result($result2);
 
                 		// Gesperrte Räume löschen
                 		$query="DELETE FROM sperre WHERE s_raum=$f[r_id]";
-                		$result2=mysql_query($query, $conn);
+                		$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				@mysql_free_result($result2);
 
 				// ausgeben: raum wurde gelöscht.
@@ -311,7 +311,7 @@ case "loesch":
 		"on r_besitzer=u_id ".
 		"WHERE r_id=$f[r_id] ";
 
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	if ($result AND mysql_num_rows($result)>0):
 
@@ -368,7 +368,7 @@ case "neu":
 		if ($communityfeatures && !$admin)
 		{
 	
-         	$result=mysql_query("select u_punkte_gesamt FROM user WHERE u_id=$u_id");
+         	$result=mysql_query("select u_punkte_gesamt FROM user WHERE u_id=$u_id") or trigger_error(mysql_error(), E_USER_ERROR);
 	        if ($result && mysql_num_rows($result)==1) { $u_punkte_gesamt=mysql_result($result,0,0); }	
 		
 		#print "raumanlegenpunkte=$raumanlegenpunkte<br>";
@@ -513,7 +513,7 @@ default;
 		$query="SELECT raum.*,u_id,u_nick ".
 			"FROM raum left join user on r_besitzer=u_id ".
 			"WHERE r_id=$raum ORDER BY $order";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		// Kopf Tabelle
 		echo $tabellenkopf;
@@ -683,7 +683,7 @@ default;
 			"GROUP BY r_id";
 
 		//system_msg("",0,$u_id,"#000000","Debug: ".$query);
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		while ($row=mysql_fetch_object($result)):
 			$anzahl_user[$row->r_id]=$row->anzahl;
@@ -695,7 +695,7 @@ default;
 		$query="SELECT raum.*,u_id,u_nick,u_level,u_punkte_gesamt,u_punkte_gruppe ".
 			"FROM raum left join user on r_besitzer=u_id ".
 			"GROUP BY r_name ORDER BY $order";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_Num_Rows($result)>0){
 
 			echo $tabellenkopf;

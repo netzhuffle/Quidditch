@@ -36,7 +36,7 @@ function erzwingeNeuePin() {
 		return;
 
 	$sql = "select u_sms_extra from user where u_id=$u_id";
-	$result = mysql_query($sql, $conn);
+	$result = mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if (mysql_num_rows($result)>0)
 		$sms_extra = unserialize(mysql_result($result,0,"u_sms_extra"));	
 
@@ -58,7 +58,7 @@ function CheckHandynummerVorhanden() {
 global $conn, $u_id;
 
 $sql = "select ui_handy from userinfo where ui_userid = $u_id";
-$result = mysql_query($sql, $conn);
+$result = mysql_query($sql, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if (mysql_num_rows($result)>0)
                 $handynr = mysql_result($result,0,"ui_handy");
 
@@ -99,7 +99,7 @@ function ZeigSMSHistory($u_id)
 GLOBAL $conn,$farbe_tabelle_kopf,$farbe_tabelle_zeile1,$farbe_tabelle_zeile2;
 // Hier die zuletzt versandten 5 SMS ausgeben
 $query="SELECT date_format(s_zeit,'%d.%m.%y %H:%i:%s') as zeit ,s_an_user_id ,s_text FROM sms WHERE s_von_user_id = '$u_id' order by s_zeit desc LIMIT 0,5";
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 if (mysql_numrows($result) > 0)
 	{	
 	$atext="<table border=0 cellpadding=2 cellspacing=0 width=100%>\n";
@@ -109,7 +109,7 @@ if (mysql_numrows($result) > 0)
 		$user_id=$a['s_an_user_id'];
  
 		$query="SELECT user.* FROM user WHERE u_id=$user_id ";
-	        $result2=mysql_query($query, $conn);
+	        $result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$b=mysql_fetch_array($result2);
 		@mysql_free_result($result2);
 	
@@ -323,12 +323,12 @@ if ($u_id && $communityfeatures) {
 	} else {
 	// Wir holen u_sms_ok und u_sms_guthaben aus der DB
 	$q="SELECT u_sms_ok, u_sms_guthaben FROM user WHERE u_id = '$u_id'";
-	$result=mysql_query($q);
+	$result=mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 	$a=@mysql_fetch_array($result);
 
 	// Wir lesen die Userdaten in $userdata
 	$query="SELECT * FROM user WHERE u_id=$u_id";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) 
 		{
 	        $userdata=mysql_fetch_array($result);
@@ -337,7 +337,7 @@ if ($u_id && $communityfeatures) {
 
 	// Wir lesen Userinfo in $f
 	$query="SELECT * FROM userinfo WHERE ui_userid=$u_id";
-        $result=mysql_query($query, $conn);
+        $result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
         if ($result && mysql_num_rows($result)!=0) {
                 if (!isset($f) || !is_array($f)) {
                         $f=mysql_fetch_array($result);
@@ -372,7 +372,7 @@ if ($u_id && $communityfeatures) {
 
 		// Wir lesen die Userdaten in Userdata
 		$query="SELECT * FROM user WHERE u_id=$u_id";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 		        $userdata=mysql_fetch_array($result);
 		        mysql_free_result($result);
@@ -447,7 +447,7 @@ $errmsg="";
 
 		// Wir lesen die Userdaten in Userdata
 		$query="SELECT * FROM user WHERE u_id=$u_id";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) {
 		        $userdata=mysql_fetch_array($result);
 		        mysql_free_result($result);

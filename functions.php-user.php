@@ -140,7 +140,7 @@ global $chat_grafik,$whotext,$beichtstuhl,$erweitertefeatures,$msgpopup,$serverp
 			"FROM_Unixtime(UNIX_TIMESTAMP(u_login),'%d.%m.%Y %H:%i') AS letzter_login,".
 			"FROM_Unixtime(UNIX_TIMESTAMP(u_neu),'%d.%m.%Y %H:%i') AS erster_login ".
 			"FROM user WHERE u_id=$user ";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		if ($result AND mysql_num_rows($result)==1):
 			$row=mysql_fetch_object($result);
@@ -174,7 +174,7 @@ global $chat_grafik,$whotext,$beichtstuhl,$erweitertefeatures,$msgpopup,$serverp
 			unset($o_http_stuff);
 			$query="SELECT r_name,online.*,UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_login) AS onlinezeit ".
 				" FROM online left join raum on o_raum=r_id WHERE o_user=$user ";
-			$result=mysql_query($query, $conn);
+			$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && $rows=mysql_num_rows($result)==1):
 				$o_row=mysql_fetch_object($result);
 				$onlinezeit=$o_row->onlinezeit;
@@ -521,7 +521,7 @@ global $chat_grafik,$whotext,$beichtstuhl,$erweitertefeatures,$msgpopup,$serverp
 					"<INPUT TYPE=\"SUBMIT\" NAME=\"eingabe\" VALUE=\"Löschen!\"><BR>";
 		
 				$query="SELECT u_chathomepage FROM user WHERE u_id = '$uu_id'";
-				$result=mysql_query($query);
+				$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 				$g=@mysql_fetch_array($result);
 				
 				if ($g['u_chathomepage'] == "J") echo "<INPUT TYPE=\"SUBMIT\" NAME=\"eingabe\" VALUE=\"Homepage löschen!\">".$f2;

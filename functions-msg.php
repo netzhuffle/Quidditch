@@ -68,7 +68,7 @@ case "/besitzeraum":
                         ($chatzeile[1] ? "r_name LIKE '$chatzeile[1]'" : "r_id=$r_id");
 		#print $query;
 
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_num_rows($result);
 
 		if ($rows==0){
@@ -77,7 +77,7 @@ case "/besitzeraum":
 			$keinbesitzer=1;
 			$query="SELECT r_id,r_name FROM raum WHERE ".
 				($chatzeile[1] ? "r_name LIKE '$chatzeile[1]'" : "r_id=$r_id");
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			$rows=mysql_num_rows($result);
 		}
                 
@@ -128,7 +128,7 @@ case "/oplist":
 			"FROM online left join raum on r_id=o_raum ".
 			"WHERE (o_level='S' OR o_level='C' OR o_level='A') ".
 			"ORDER BY r_name";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result AND mysql_num_rows($result)>0) {
 			while ($row=mysql_fetch_object($result)) {
 				$userdaten=unserialize($row->o_userdata.$row->o_userdata2.$row->o_userdata3.$row->o_userdata4);
@@ -169,14 +169,14 @@ case "/int":
 		$privat=TRUE;
 
 		$query="SELECT r_name FROM raum WHERE r_id=$o_raum";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$r_name=mysql_result($result,0,"r_name");
 		$tempadm="";
 		if (strtolower($chatzeile[0]!="/int")) $tempadm=" OR o_level='A'";
 
 		$query="SELECT o_user FROM online WHERE (o_level='S' OR o_level='C'$tempadm)";
 		// debug system_msg("",0,$u_id,$system_farbe,"$query");
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result>0) {
 	 	    $nums=mysql_num_rows($result);
 		    if ($nums>0) {
@@ -227,7 +227,7 @@ case "/dupes":
 			"FROM online left join raum on o_raum=r_id ".
 			"WHERE (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ".
 			"ORDER BY o_ip";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result>0) {
 			while ($row=mysql_fetch_array($result)) {
 				if ($row['o_ip']==$alt['o_ip']) {
@@ -290,7 +290,7 @@ case "/ip":
                 if ($nick['u_nick']!="") 
 		{
                         $query="SELECT o_ip FROM online WHERE o_user = $nick[u_id]";
-                        $result=mysql_query($query,$conn);
+                        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                         if ($result && mysql_num_rows($result)==1)
 			{
                                 $o_nick=mysql_fetch_array($result);  
@@ -306,7 +306,7 @@ case "/ip":
 			// Nick nich Online - Hole IP aus History der Usertabelle
                         $query="SELECT u_nick,u_id,u_ip_historie FROM user ".
                                 "WHERE u_nick='".coreCheckName($chatzeile[1],$check_name)."'";
-                        $result=mysql_query($query,$conn);
+                        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                         if ($result && mysql_num_rows($result)==1)
 			{
                                 $nick=mysql_fetch_array($result);
@@ -342,7 +342,7 @@ case "/ip":
 			"AND o_ip = '$onlineip' ". 
                        	"ORDER BY o_user";
 
-                $result=mysql_query($query,$conn); 
+                $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR); 
 
 		if ($result && mysql_num_rows($result)>=1) 
 		{
@@ -378,7 +378,7 @@ case "/edithistorie":
 			if ($nick['u_nick']=="") {
 				$query="SELECT u_nick,u_id from user ".
 					"WHERE u_nick='".coreCheckName($chatzeile[1],$check_name)."'";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)==1){
 					$nick=mysql_fetch_array($result);
 				};
@@ -389,7 +389,7 @@ case "/edithistorie":
 if ($nick['u_nick'] != "")
 	{
 	$query="SELECT u_profil_historie FROM user WHERE u_nick = '$nick[u_nick]'";
-	$result=mysql_query($query);
+	$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	$bla=mysql_fetch_array($result);
 	$uu_profil_historie=unserialize($bla[u_profil_historie]);
 	#system_msg("",0,$u_id,$system_farbe,"lade history...");
@@ -467,7 +467,7 @@ case "/gaga":
 					$query="update online set o_knebel=FROM_UNIXTIME(UNIX_TIMESTAMP(NOW())+$knebelzeit*60) ".
 							"where o_user=$nick[u_id]";
 					// system_msg("",0,$u_id,$system_farbe,$query);
-					mysql_query($query,$conn);
+					mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					$txt = ( $knebelzeit ? $t['knebel4'] : $t['knebel3'] );
 					$txt = str_replace("%admin%",$u_nick,$txt);
 					$txt = str_replace("%user%",$nick['u_nick'],$txt);
@@ -490,7 +490,7 @@ case "/gaga":
 				"UNIX_TIMESTAMP(o_knebel)-UNIX_TIMESTAMP(NOW()) as knebel from online ".
 				"where o_raum=$o_raum AND o_knebel>NOW()";
 		}
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$txt="";
 		if ($result>0) {
 			$rows=mysql_num_rows($result);
@@ -512,7 +512,7 @@ case "/invite":
 	// Einladen in Räume... darf nur Admin oder Raumbesitzer
 	// Besitzer des aktuellen Raums ermitteln
 	$query="SELECT r_besitzer,r_name from raum WHERE r_id=$r_id ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result>0) {
 		$rows=mysql_num_rows($result);
 		if ($rows==1) {
@@ -541,11 +541,11 @@ case "/invite":
 			if ($nick['u_nick']!="") {
 				// nick gefunden. jetzt eintragen oder löschen...
 				$query="SELECT inv_user FROM invite WHERE inv_raum=$r_id AND inv_user=$nick[u_id]";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result>0) {
 					if (mysql_num_rows($result)>0) {
 						$query="DELETE FROM invite WHERE inv_raum=$r_id AND inv_user=$nick[u_id]";
-						$result2=mysql_query($query,$conn);
+						$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 						$msg=$t['invite4'];
 					} else {
 						$f['inv_id']=0;
@@ -576,11 +576,11 @@ case "/invite":
 				$query="SELECT u_nick,u_id from user,invite ".
 					"WHERE inv_raum=$r_id AND inv_user=u_id AND u_nick='$chatzeile[1]'".
 					"ORDER BY u_nick";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)==1){
 					$row=mysql_fetch_object($result);
 					$query2="DELETE FROM invite WHERE inv_raum=$r_id AND inv_user=$row->u_id";
-					$result2=mysql_query($query2,$conn);
+					$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					$msg=$t['invite4'];
 					$msg=str_replace("%admin%",$u_nick,$msg);	
 					$msg=str_replace("%raum%",$r_name,$msg);	
@@ -596,7 +596,7 @@ case "/invite":
 		$query="SELECT u_id,u_nick,u_level,u_punkte_gesamt,u_punkte_gruppe,inv_id ".
 			"FROM invite LEFT JOIN user ON u_id=inv_user ".
 			"WHERE inv_raum=$r_id";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$txt="";
 		if ($result && mysql_num_rows($result)>0){
 			while ($row=mysql_fetch_object($result)) {
@@ -605,7 +605,7 @@ case "/invite":
 					$txt.=user($row->u_id,$row,TRUE,FALSE,"&nbsp;","","",FALSE);
 				} else {
 					$query="DELETE FROM invite WHERE inv_id=$row->inv_id";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
 			}
 		}
@@ -704,7 +704,7 @@ case "/ignoriere":
 			$query="SELECT u_nick,u_id from user,iignore ".
 				"WHERE i_user_aktiv=$u_id AND i_user_passiv=u_id AND u_nick='$chatzeile[1]'".
 				"ORDER BY u_nick";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_num_rows($result)==1){
 				$row=mysql_fetch_object($result);
 				ignore($o_id,$u_id,$u_name,$row->u_id,$row->u_nick);
@@ -721,7 +721,7 @@ case "/ignoriere":
         // Denn da passt nur ein Array mit 255 chars rein.
         $query="SELECT u_nick,u_id from user,iignore ".
                 "WHERE i_user_aktiv=$u_id AND u_id=i_user_passiv order by i_id";
-        $result=@mysql_query($query,$conn); 
+        $result=@mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR); 
         $anzahl=@mysql_num_rows($result)-16;
 
 	# system_msg("",0,$u_id,$system_farbe,"DEBUG: $anzahl");
@@ -745,7 +745,7 @@ case "/ignoriere":
 			"FROM iignore LEFT JOIN user on i_user_passiv=u_id ".
 			"WHERE i_user_aktiv=$u_id ".
 			"ORDER BY u_nick,i_id";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			
 		if ($result && mysql_num_rows($result)>0) {
 			$i=0;
@@ -757,7 +757,7 @@ case "/ignoriere":
 					$text=$text.user($row->u_id,$row,TRUE,FALSE,"&nbsp;","","",FALSE);
 				} else {
 					$query="DELETE FROM iignore WHERE i_id=$row->i_id";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
 				$i++;
 
@@ -773,7 +773,7 @@ case "/ignoriere":
 			"FROM iignore LEFT JOIN user on i_user_aktiv=u_id ".
 			"WHERE i_user_passiv=$u_id ".
 			"ORDER BY u_nick,i_id";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			
 		if ($result && mysql_num_rows($result)>0) {
 			$i=0;
@@ -785,7 +785,7 @@ case "/ignoriere":
 					$text=$text.user($row->u_id,$row,TRUE,FALSE,"&nbsp;","","",FALSE);
 				} else {
 					$query="DELETE FROM iignore WHERE i_id=$row->i_id";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
 				$i++;
 
@@ -826,7 +826,7 @@ case "/join":
 			"FROM raum ".
 			"WHERE r_name like '$chatzeile[1]%' ".
 			"ORDER BY laenge";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 		if (mysql_num_rows($result)!=0) {
 			$r_id_neu=mysql_result($result,0,"r_id");
@@ -848,7 +848,7 @@ case "/join":
 
 			if ($communityfeatures && !$admin && $raumanlegenpunkte)
                 	{
-	                $result=mysql_query("select u_punkte_gesamt FROM user WHERE u_id=$u_id");
+	                $result=mysql_query("select u_punkte_gesamt FROM user WHERE u_id=$u_id") or trigger_error(mysql_error(), E_USER_ERROR);
         	        if ($result && mysql_num_rows($result)==1) { $u_punkte_gesamt=mysql_result($result,0,0); }
 
 			#system_msg("",0,$u_id,$system_farbe,"raumanlegenpunkte = $raumanlegenpunkte, u_punkte_gesamt=$u_punkte_gesamt");
@@ -883,7 +883,7 @@ case "/join":
 		else
 		$query="SELECT r_name from raum WHERE r_status1 = 'O' order by r_name";
 
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_num_rows($result);
 		$text=$t['chat_msg12']." ";
 		$i=0;
@@ -914,7 +914,7 @@ case "/list":
 
 			$query="SELECT r_id from raum WHERE r_name LIKE '$chatzeile[1]%' ";
 			if (!$admin) $query.=" AND (r_status1='O' OR r_status1='m' OR r_id=$o_raum) ";	
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result AND mysql_num_rows($result)>0):
 				$text=$t['chat_msg12']."<br>";
 				$row=mysql_fetch_object($result);
@@ -939,7 +939,7 @@ case "/people":
 	$query="SELECT r_id from raum ";
 	if (!$admin) $query.=" WHERE (r_status1='O' OR r_status1='m' OR r_id=$o_raum) ";	
 	$query.=" ORDER BY r_name";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result AND mysql_num_rows($result)>0):
 		$text=$t['chat_msg12']."<br>";
 		while ($row=mysql_fetch_object($result)):
@@ -1016,14 +1016,14 @@ case "/schubs":
 				} else {
 					$query="select r_id,r_name from raum where r_name like '$raum%'";
 				}
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result>0) {
 					$raumid=mysql_result($result,0,"r_id");
 					$raum=mysql_result($result,0,"r_name");
 					mysql_free_result($result);
 				}
 				$query="select o_raum,o_id,r_name from online,raum where o_user=$user[u_id] AND r_id=o_raum";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result>0) {
 					$raumalt=mysql_result($result,0,"r_name");
 					$uo_id=mysql_result($result,0,"o_id");
@@ -1044,7 +1044,7 @@ case "/kick":
 	// Besitzer des aktuellen Raums ermitteln
 	$query="SELECT r_besitzer from raum ".
 		"WHERE r_id=$r_id ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$rows=mysql_num_rows($result);
                 
 	if ($rows==1):
@@ -1067,7 +1067,7 @@ case "/kick":
 				"WHERE o_name LIKE '%$chatzeile[1]%' ".
 				"ORDER BY laenge";
 
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			$rows=mysql_num_rows($result);
        	         
 			// User bestimmen
@@ -1091,7 +1091,7 @@ case "/kick":
 				$query="SELECT u_nick,u_id from user left join sperre ".
 					" on u_id = s_user ".
 					"WHERE u_nick='$chatzeile[1]' and s_raum = $r_id ";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)==1)
 				{
 					$row=mysql_fetch_object($result);
@@ -1117,7 +1117,7 @@ case "/kick":
 			"WHERE s_user=u_id ".
 			"AND s_raum=$r_id ".
 			"ORDER BY u_nick";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		$rows=mysql_num_rows($result);
 
 		if ($rows>0)
@@ -1160,7 +1160,7 @@ case "/nick":
 	// if ((strlen($chatzeile[1])>0) && ($chatzeile[1]!=$u_name) && ($u_level!="G")):
 
 				$query="SELECT u_nick_historie FROM user WHERE u_id = '$u_id'";
-				$result=mysql_query($query);
+				$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 				$xyz=mysql_fetch_array($result);
 				$nick_historie=unserialize($xyz['u_nick_historie']);
 				
@@ -1190,7 +1190,7 @@ case "/nick":
                         	"WHERE u_nick LIKE '$f[u_nick]' ".
 				"AND u_id != $u_id";
 
-                	$result=mysql_query($query,$conn);
+                	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                 	$rows=mysql_num_rows($result);
                 	if ($rows!=0):
 				if ($rows == 1)
@@ -1222,7 +1222,7 @@ case "/nick":
 				// Neuen Namen setzen und alte Nicknamen in DB speichern
 
 				$query="SELECT u_nick_historie FROM user WHERE u_id = '$u_id'";
-				$result=mysql_query($query);
+				$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 				$xyz=mysql_fetch_array($result);
 				$nick_historie=unserialize($xyz['u_nick_historie']);
 				
@@ -1569,6 +1569,7 @@ case "/wuerfel":
 				hidden_msg($u_name,$u_id,$u_farbe,$r_id,$t['chat_msg34']);
 				$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance();
 				$quidditch->command($chatzeile, $u_nick);
+				$quidditch->flush();
 			} else {
 				system_msg("",$u_id,$u_id,$system_farbe,$t['moderiert1']);
 			}
@@ -1614,7 +1615,7 @@ case "/whois":
 			}
 
 			
-			$result=@mysql_query($query,$conn);
+			$result=@mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 			$rows=mysql_num_rows($result);
 			
@@ -1626,7 +1627,7 @@ case "/whois":
 				$q2="SELECT r_name,o_ip,o_vhost,o_browser,o_id,o_who,".
 					"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_login) AS online_zeit ".
 					"FROM online left join raum on r_id=o_raum WHERE o_user=$row->u_id ";
-				$r2=mysql_query($q2,$conn);
+				$r2=mysql_query($q2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($r2 && mysql_num_rows($r2)>0) {
 					// User ist online
 					$r=mysql_fetch_object($r2);
@@ -1722,7 +1723,7 @@ case "/msgpriv": // Extra behandlung für Private Nachrichten im Userfenster, f�
        				// Prüfen ob User noch Online              		
 				$query="SELECT o_id, o_name, o_user, o_userdata, o_userdata2, o_userdata3, o_userdata4 FROM online WHERE o_name = '$chatzeile[1]' ";
               	
-			        $result=mysql_query($query,$conn);
+			        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
         			if ($result>=0) 
 				{
 					if (mysql_num_rows($result) == 1) 
@@ -1759,7 +1760,7 @@ case "/msgpriv": // Extra behandlung für Private Nachrichten im Userfenster, f�
 				$query="SELECT i_user_aktiv, i_user_passiv FROM iignore ".
 				       "WHERE (i_user_aktiv='$u_id' AND i_user_passiv = '$nick[u_id]') OR ".
 				       "      (i_user_passiv='$u_id' AND i_user_aktiv = '$nick[u_id]') ";
-				$result=mysql_query($query);
+				$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 				$num=mysql_num_rows($result);
 				mysql_free_result($result);
 				
@@ -1800,13 +1801,13 @@ $query="SELECT f_id,f_text,f_userid,f_freundid,f_zeit FROM freunde WHERE f_useri
        "ORDER BY f_zeit desc ";
 
 
-$result=mysql_query($query);
+$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $fid="";
 $nicks="";
 while ($a=mysql_fetch_array($result))
 	{
 	$query2="SELECT o_user,o_name FROM online WHERE (o_user = '$a[f_userid]' or o_user = '$a[f_freundid]') and o_user != '$u_id'";
-	$result2=mysql_query($query2);
+	$result2=mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
 	if (mysql_numrows($result2) == 1) {
 					if ($a[f_userid] != $u_id) $fid[]=$a[f_userid];
 					if ($a[f_freundid] != $u_id) $fid[]=$a[f_freundid];
@@ -1838,7 +1839,7 @@ case "/toall":
 		if ($text){
 			// Schleife über alle User, die online sind
 			$query="SELECT o_user FROM online";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_num_rows($result)>0) {
 				while ($row=mysql_fetch_array($result)) {
 					if ($row['o_user']!=$u_id) {
@@ -1866,7 +1867,7 @@ case "/loescheraum":
 		// Rechte prüfen 
 		$query="SELECT r_id,r_name,r_besitzer FROM raum ".
 			"WHERE r_name like '$chatzeile[1]' ";
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                 
 		if (mysql_num_rows($result)!=0) {
 			$row=mysql_fetch_object($result);
@@ -1874,7 +1875,7 @@ case "/loescheraum":
 
 				// Lobby suchen
 				$query="SELECT r_id FROM raum WHERE r_name='$lobby' ";
-				$result2=mysql_query($query, $conn);
+				$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result2 AND mysql_num_rows($result2)>0):
         				$lobby_id=mysql_result($result2,0,"r_id");
 				endif;
@@ -1897,7 +1898,7 @@ case "/loescheraum":
 					$query="SELECT o_user,o_name FROM online ".
         					"WHERE o_raum=$row->r_id ";
 
-					$result2=mysql_query($query, $conn);
+					$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					while($row2=mysql_fetch_object($result2)):
         					system_msg("",0,$row2->o_user,$system_farbe,str_replace("%r_name%",$row->r_name,$t['chat_msg62']));
         					$oo_raum=raum_gehe($o_id,$row2->o_user,$row2->o_name,$row->r_id,$lobby_id,FALSE);
@@ -1907,12 +1908,12 @@ case "/loescheraum":
 					@mysql_free_result($result2);
 
         				$query="DELETE FROM raum WHERE r_id=$row->r_id ";
-        				$result2=mysql_query($query, $conn);
+        				$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					@mysql_free_result($result2);
 
         				// Gesperrte Räume löschen
         				$query="DELETE FROM sperre WHERE s_raum=$row->r_id";
-        				$result2=mysql_query($query, $conn);
+        				$result2=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					@mysql_free_result($result2);
 
 					// Meldung an User
@@ -1939,7 +1940,7 @@ case "/schenke":
 	// Rechte prüfen 
 	$query="SELECT r_id,r_name,r_besitzer FROM raum ".
 		"WHERE r_id=$o_raum ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                 
 	if (mysql_num_rows($result)!=0) {
 		$row=mysql_fetch_object($result);
@@ -1983,7 +1984,7 @@ case "/aendereraum":
 	// Rechte prüfen 
 	$query="SELECT r_id,r_name,r_besitzer,r_status1 FROM raum ".
 		"WHERE r_id=$o_raum ";
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                 
 	if (mysql_num_rows($result)!=0) {
 		$row=mysql_fetch_object($result);
@@ -2202,7 +2203,7 @@ case "/m":
 		if ($nick['u_nick']=="") {
 			$query="SELECT u_nick,u_id from user ".
 				"WHERE u_nick='".coreCheckName($chatzeile[1],$check_name)."'";
-			$result=mysql_query($query,$conn);
+			$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 			if ($result && mysql_num_rows($result)==1){
 				$nick=mysql_fetch_array($result);
 			};
@@ -2211,7 +2212,7 @@ case "/m":
 	
 	     $ignore=false;
              $query2="SELECT * FROM iignore WHERE i_user_aktiv='$nick[u_id]' AND i_user_passiv = '$u_id'";
-             $result2=mysql_query($query2);
+             $result2=mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
              $num=mysql_numrows($result2);
              if ($num >= 1) {$ignore=true;}
 
@@ -2284,7 +2285,7 @@ case "/buddy":
 			if ($nick['u_nick']=="") {
 				$query="SELECT u_nick,u_id,u_level from user ".
 					"WHERE u_nick='".coreCheckName($chatzeile[1],$check_name)."'";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)==1){
 					$nick=mysql_fetch_array($result);
 				};
@@ -2296,7 +2297,7 @@ case "/buddy":
 			if ($nick['u_nick']!="" && $nick['u_id'])
 			{
 		        	$query2="SELECT * FROM iignore WHERE i_user_aktiv='$nick[u_id]' AND i_user_passiv = '$u_id'";
-             			$result2=mysql_query($query2);
+             			$result2=mysql_query($query2) or trigger_error(mysql_error(), E_USER_ERROR);
              			$num=mysql_numrows($result2);
              			if ($num >= 1) {$freunddazu=-1;}
 				if ($nick['u_level'] == 'Z') {$freunddazu=-2;}
@@ -2312,7 +2313,7 @@ case "/buddy":
 					"OR ".
 					"(f_userid=$u_id AND f_freundid=$nick[u_id] )";
 
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)>0){
 				
 					// User ist bereits Freund -> entfernen
@@ -2320,7 +2321,7 @@ case "/buddy":
 						"(f_userid=$nick[u_id] AND f_freundid=$u_id) ".
 						"OR ".
 						"(f_userid=$u_id AND f_freundid=$nick[u_id])";
-					$result=mysql_query($query,$conn);
+					$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					system_msg("",0,$u_id,$system_farbe,str_replace("%u_name%",$nick['u_nick'],$t['chat_msg84']));
 
 				} elseif($nick['u_id']==$u_id) {
@@ -2371,7 +2372,7 @@ case "/buddy":
 		       "SELECT f_id,f_text,f_userid,f_freundid,f_zeit FROM freunde WHERE f_freundid=$u_id AND f_status = 'bestaetigt' ".
 		       "ORDER BY f_zeit desc "; 
 
-		$result=mysql_query($query,$conn);
+		$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)>0) {
 
 			system_msg("",0,$u_id,$system_farbe,str_replace("%u_name%",$u_nick,$t['chat_msg85']));
@@ -2385,14 +2386,14 @@ case "/buddy":
 						"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_login) AS online ".
 						"from user left join online on o_user=u_id ".
 						"WHERE u_id=$row->f_userid ";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				} elseif ($row->f_freundid!=$u_id) {
 					$query="SELECT u_nick,u_id,u_level,u_punkte_gesamt,u_punkte_gruppe,o_id,".
 						"date_format(u_login,'%d.%m.%y %H:%i') as login, ".
 						"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_login) AS online ".
 						"from user left join online on o_user=u_id ".
 						"WHERE u_id=$row->f_freundid ";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
 				if ($result2 && mysql_num_rows($result2)>0) {
 					// User gefunden -> Ausgeben
@@ -2403,7 +2404,7 @@ case "/buddy":
 					// User nicht gefunden, Freund löschen
 					$txt="NOBODY";
 					$query="DELETE from freunde WHERE f_id=$row->f_id";
-					$result2=mysql_query($query,$conn);
+					$result2=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				};
 
 				// Text als Systemnachricht ausgeben
@@ -2460,7 +2461,7 @@ case "/blackliste":
 		$chatzeile[1]=coreCheckName($chatzeile[1],$check_name);
 				$query="SELECT u_nick,u_id from user ".
 					"WHERE u_nick='$chatzeile[1]'";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)==1){
 					$nick=mysql_fetch_array($result);
 				};
@@ -2473,13 +2474,13 @@ case "/blackliste":
 				$query="SELECT f_id from blacklist WHERE ".
 					"f_blacklistid=$nick[u_id] ";
 
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result && mysql_num_rows($result)>0){
 				
 					// User ist bereits auf der Liste -> entfernen
 					$query="DELETE from blacklist WHERE ".
 						"f_blacklistid=$nick[u_id] ";
-					$result=mysql_query($query,$conn);
+					$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					system_msg("",0,$u_id,$system_farbe,str_replace("%u_name%",$nick['u_nick'],$t['chat_msg97']));
 
 				} elseif($nick['u_id']==$u_id) {
@@ -2532,7 +2533,7 @@ case "/sms":    # martin 26.02.2002
 		$chatzeile[1]=coreCheckName($chatzeile[1],$check_name);
                         $query="SELECT u_nick,u_id from user ".
                                 "WHERE u_nick='$chatzeile[1]'";
-                        $result=mysql_query($query,$conn);
+                        $result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
                         if ($result && mysql_num_rows($result)==1){
                                 $nick=mysql_fetch_array($result);
                         };
@@ -2748,7 +2749,7 @@ default:
 				// In Session merken, dass Text im Chat geschrieben wurde
 				$query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
 					"WHERE o_user=$u_id";       
-				$result=mysql_query($query,$conn);  
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);  
 
 				// Punkte berechnen und User gutschreiben
 				// Punkte=Anzahl der Wörter mit mindestens 4 Buchstaben
@@ -2759,7 +2760,7 @@ default:
 
 					// Punkte gutschreiben, wenn im Raum mindestens $punkte_ab_user User online sind
 					$query="select count(o_id) from online where o_raum=$o_raum";
-					$result=mysql_query($query,$conn);
+					$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 					if ($punktefeatures && $result && mysql_result($result,0,0)>=$punkte_ab_user) 
 // DEBUG				if ($punktefeatures && $result && mysql_result($result,0,0)>=1) 
@@ -2783,6 +2784,7 @@ default:
 				$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance();
 				$quidditch->room = $r_id;
 				$quidditch->command($chatzeile, $u_nick);
+				$quidditch->flush();
 
 			} else {
 				if ($u_level=="M") {
@@ -2795,7 +2797,7 @@ default:
 					// In Session merken, dass Text im Chat geschrieben wurde
 					$query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
 						"WHERE o_user=$u_id";       
-					$result=mysql_query($query,$conn);  
+					$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);  
 
 				} else {
 
@@ -2807,7 +2809,7 @@ default:
  						// In Session merken, dass Text im Chat geschrieben wurde
  						$query="UPDATE online SET o_timeout_zeit=DATE_FORMAT(NOW(),\"%Y%m%d%H%i%s\"), o_timeout_warnung='N' ".
 							"WHERE o_user=$u_id";       
-						$result=mysql_query($query,$conn);  
+						$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);  
 
 						system_msg("",0,$u_id,$system_farbe,$t['moderiert2']);
 						system_msg("",0,$u_id,$system_farbe,"&gt;&gt;&gt; ".$f['c_text']);
@@ -2844,7 +2846,7 @@ global $conn;
 
 // Id der Lobby als Voreinstellung ermitteln
 $query="SELECT r_id FROM raum WHERE r_name LIKE '$lobby' ";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 $rows=mysql_num_rows($result);
 
 if ($rows>0):
@@ -2860,7 +2862,7 @@ if ($r_id!=$lobby_id):
 		"WHERE s_user=$s_user ".
 		"AND  s_raum=$r_id";
 
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	$rows=mysql_num_rows($result);
 
 	if ($rows==0):
@@ -2871,7 +2873,7 @@ if ($r_id!=$lobby_id):
 			"AND o_user=$s_user ".
 			"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ";
 
-	        $result2=mysql_query($query2,$conn);
+	        $result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
         	$rows2=mysql_num_rows($result2);
 
 		if ($rows2>0):
@@ -2899,7 +2901,7 @@ if ($r_id!=$lobby_id):
 		// Sperre löschen
 		$s_id=mysql_result($result,0,"s_id");
 		$query2="DELETE FROM sperre WHERE s_id=$s_id ";
-		$result2=mysql_query($query2,$conn);
+		$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		global_msg($u_id,$r_id,"'$u_name' $t[sperre2] '$s_user_name' $t[sperre5]");
 	endif;
 
@@ -2918,7 +2920,7 @@ else:
 			"AND o_user=$s_user ".
 			"AND (UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(o_aktiv)) <= $timeout ";
 
-	        $result2=mysql_query($query2,$conn);
+	        $result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
         	$rows2=mysql_num_rows($result2);
 
 		if ($rows2>0):
@@ -2952,11 +2954,11 @@ $query="SELECT * FROM iignore ".
 	"WHERE i_user_aktiv=$i_user_aktiv ".
 	"AND i_user_passiv=$i_user_passiv ";
 
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 
 $query="SELECT u_level FROM user WHERE u_id = '$i_user_passiv'";
-$result2=mysql_query($query);
+$result2=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 $a=mysql_fetch_array($result2);
 
 $isadmin=false;
@@ -2989,7 +2991,7 @@ elseif ($result && mysql_num_rows($result)>0):
 	// Ignore löschen
 	$i_id=mysql_result($result,0,"i_id");
 	$query2="DELETE FROM iignore WHERE i_id=$i_id ";
-	$result2=mysql_query($query2,$conn);
+	$result2=mysql_query($query2,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 	system_msg("",0,$i_user_aktiv,$system_farbe,str_replace("%i_user_name_passiv%",$i_user_name_passiv,$t['ignore3']));
 	system_msg("",0,$i_user_passiv,$system_farbe,str_replace("%i_user_name_passiv%",$i_user_name_passiv,str_replace("%i_user_name_aktiv%",$i_user_name_aktiv,$t['ignore4'])));
@@ -3005,7 +3007,7 @@ endif;
 // Kopie in Onlinedatenbank aktualisieren
 // Query muss mit dem Code in login() übereinstimmen
 $query="SELECT i_user_passiv FROM iignore WHERE i_user_aktiv=$i_user_aktiv";
-$result=mysql_query($query,$conn);
+$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 
 if ($result):
 
@@ -3020,7 +3022,7 @@ if ($result):
 
 	$query="UPDATE online SET ".
 		"o_ignore='".addslashes(serialize($ignore))."' WHERE o_user=$i_user_aktiv";
-	mysql_query($query,$conn);
+	mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	@mysql_free_result($result);
 
 endif;        
@@ -3087,7 +3089,7 @@ function nick_ergaenze($part,$scope="raum",$noerror=0) {
 		break;
 	}
 	
-	$result=mysql_query($query,$conn);
+	$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result>=0) {
 		$rows=mysql_num_rows($result);
 	} else {
@@ -3194,7 +3196,7 @@ function auto_knebel($text) {
 
 	// für temp-admins gibts nun auch keinen autoknebel mehr
 	$query="SELECT o_level FROM online WHERE o_user = '$u_id'";
-	$result=mysql_query($query);
+	$result=mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	$a=mysql_fetch_array($result);
 	if ($a['o_level'] == "A" || $a['o_level'] == "S" || $a['o_level'] == "C" || $a['o_level'] == "M") { $admin2=true;} else { $admin2=false;}
 	
@@ -3225,7 +3227,7 @@ function auto_knebel($text) {
 				// Hole aktuelle Knebelendzeit und geplante neue
 				$query= "select o_knebel, FROM_UNIXTIME(UNIX_TIMESTAMP(NOW())+$knebelzeit*60) as knebelneu ".
 					"from online where o_user=$u_id";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				$row=mysql_fetch_array($result);
 
 				// system_msg("",0,$u_id,$system_farbe,"DEBUG: $row[o_knebel] ... $row[knebelneu] ");				
@@ -3235,15 +3237,15 @@ function auto_knebel($text) {
 				{
 					$query="update online set o_knebel=FROM_UNIXTIME(UNIX_TIMESTAMP(NOW())+$knebelzeit*60) ".
 						"where o_user=$u_id";
-					$result=mysql_query($query,$conn);
+					$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
 
 				// admins benachrichtigen, immer, auch wenn schon geknebelt gewesen
 				$query="SELECT r_name FROM raum WHERE r_id=$o_raum";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				$r_name=mysql_result($result,0,"r_name");
 				$query="SELECT o_level,o_name,o_user,r_name FROM online,raum WHERE (o_level='S' OR o_level='C') AND r_id=o_raum ";
-				$result=mysql_query($query,$conn);
+				$result=mysql_query($query,$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				if ($result>0) {
 						if (mysql_num_rows($result)>0) {
 								while ($row=mysql_fetch_array($result)) {

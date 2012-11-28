@@ -82,7 +82,7 @@ if ( !$conn) {
 
 // Prüfe ob User existiert und NP aktiviert ist
 $query="SELECT u_chathomepage FROM user WHERE u_id=$u_id ";
-$result=mysql_query($query, $conn);
+$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 if ($result && mysql_num_rows($result)==1) 
 {
 	if (mysql_result($result,0,"u_chathomepage") != 'J')
@@ -120,7 +120,7 @@ if (file_exists($cachepfad))
 			
 		// Größen aus DB
 		$query="SELECT b_width, b_height, b_mime FROM bild WHERE b_user=$u_id AND b_name='$feld'";
-		$result=mysql_query($query, $conn);
+		$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 		if ($result && mysql_num_rows($result)==1) 
 		{
 			$b_width=mysql_result($result,0,"b_width");
@@ -161,7 +161,7 @@ if ($anzeigeauscache)
 	// Bild aus der DB lesen
 
 	$query="SELECT b_bild,b_mime FROM bild WHERE b_user=$u_id AND b_name='$feld'";
-	$result=mysql_query($query, $conn);
+	$result=mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 	if ($result && mysql_num_rows($result)==1) {
 		$b_mime=mysql_result($result,0,"b_mime");
 		$bild=mysql_result($result,0,"b_bild");

@@ -3,7 +3,6 @@
 namespace Netzhuffle\MainChat\Quidditch;
 
 class Quidditch {
-	private static $instance;
 	public $room;
 	public $runde = 0;
 	public $schiedsrichter;
@@ -17,24 +16,22 @@ class Quidditch {
 	private function __construct() {}
 
 	public static function getInstance() {
-		if(!self::$instance) {
-			//mysql_query("LOCK TABLES ".DB_PREFIX."data WRITE, ".DB_PREFIX."action a WRITE, ".DB_PREFIX."action WRITE, ".DB_PREFIX."user u WRITE, ".DB_PREFIX."user WRITE") or trigger_error(mysql_error(), E_USER_ERROR);
-			$result = mysql_query("SELECT data FROM quidditch") or trigger_error(mysql_error(), E_USER_ERROR);
-			$data = mysql_fetch_assoc($result);
-			if($data["data"]) {
-				self::$instance = unserialize($data["data"]);
-			}
-			if(!self::$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
-				self::$instance = new self;
-			}
+		mysql_query("LOCK TABLES quidditch WRITE, user READ LOCAL") or trigger_error(mysql_error(), E_USER_ERROR);
+		$result = mysql_query("SELECT data FROM quidditch") or trigger_error(mysql_error(), E_USER_ERROR);
+		$data = mysql_fetch_assoc($result);
+		if($data["data"]) {
+			$instance = unserialize($data["data"]);
 		}
-		return self::$instance;
+		if(!$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
+			$instance = new self;
+		}
+		return $instance;
 	}
 
-	public function __destruct() {
-		$data = mysql_real_escape_string(serialize(self::$instance));
+	public function flush() {
+		$data = mysql_real_escape_string(serialize($this));
 		mysql_query("UPDATE quidditch SET data = '$data'") or trigger_error(mysql_error(), E_USER_ERROR);
-		//mysql_query("UNLOCK TABLES") or trigger_error(mysql_error(), E_USER_ERROR);
+		mysql_query("UNLOCK TABLES") or trigger_error(mysql_error(), E_USER_ERROR);
 	}
 
 	public function getSpieler($name) {
@@ -112,21 +109,23 @@ class Quidditch {
 	}
 
 	private function start($modus) {
-		$neuesSpiel = self::$instance = new self;
-		if ($this->room === null) trigger_error("No room defined", E_USER_ERROR);
-		self::$instance->room = $this->room;
 		if(!$modus) $modus = "S-C";
 		$modus = explode("-", $modus, 3);
 		if(count($modus) == 1) {
 			$modus[1] = "C";
 		}
-		$neuesSpiel->schiedsrichter = new Schiedsrichter("aSchiedsrichter", null);
-		$neuesSpiel->team1 = new Team($modus[0]);
-		$neuesSpiel->team2 = new Team($modus[1]);
-		$neuesSpiel->team1->setGegner($neuesSpiel->team2);
-		$neuesSpiel->team2->setGegner($neuesSpiel->team1);
-
-		$neuesSpiel->addStackItem(new Befehl($neuesSpiel->schiedsrichter, "Runde", 1), 1);
+		
+		$this->runde = 0;
+		$this->schiedsrichter = new Schiedsrichter("aSchiedsrichter", null);
+		$this->team1 = new Team($modus[0]);
+		$this->team2 = new Team($modus[1]);
+		$this->team1->setGegner($this->team2);
+		$this->team2->setGegner($this->team1);
+		$this->quaffelSpieler = null;
+		$this->stack = array();
+		
+		$this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1), 1);
+		$this->flush();
 	}
 }
 

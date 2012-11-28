@@ -78,7 +78,7 @@ if (strlen($u_id)>0) {
 				if ($answer!="") {
 					$answer=AddSlashes($answer);
 					$query="DELETE FROM moderation WHERE c_id=$answer";
-					mysql_query($query, $conn);
+					mysql_query($query, $conn) or trigger_error(mysql_error(), E_USER_ERROR);
 				}
 				zeige_moderations_antworten($o_raum);
 				break;
