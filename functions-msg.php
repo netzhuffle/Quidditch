@@ -1567,6 +1567,8 @@ case "/wuerfel":
 			// Bei Moderation private Nachricht, sonst Nachricht an alle
 			if (!$ist_moderiert || $u_level=="M") {
 				hidden_msg($u_name,$u_id,$u_farbe,$r_id,$t['chat_msg34']);
+				$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance();
+				$quidditch->command($chatzeile, $u_nick);
 			} else {
 				system_msg("",$u_id,$u_id,$system_farbe,$t['moderiert1']);
 			}
@@ -2777,6 +2779,10 @@ default:
 					}
 
 				}
+				
+				$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance();
+				$quidditch->room = $r_id;
+				$quidditch->command($chatzeile, $u_nick);
 
 			} else {
 				if ($u_level=="M") {
@@ -2819,9 +2825,6 @@ default:
 	}
 
 };
-
-$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance($r_id);
-$quidditch->command($chatzeile, $u_nick);
 	
 };
 

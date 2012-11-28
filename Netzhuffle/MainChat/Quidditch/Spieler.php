@@ -28,7 +28,7 @@ abstract class Spieler {
 		//	$id = mysql_fetch_assoc($result_id);
 			trigger_error("Kein User mit Name $this->name", E_USER_ERROR);
 		}
-		return $id["id"];
+		return $id["u_id"];
 	}
 
 	public function doCommand($befehl) {
@@ -114,6 +114,7 @@ abstract class Spieler {
 	}
 	
 	protected function write($message) {
+		require_once("functions.php-func-html_parse.php");
 		$quidditch = Quidditch::getInstance();
 		$f = array();
 		$f['c_text'] = html_parse(false, htmlspecialchars($message));
@@ -121,7 +122,9 @@ abstract class Spieler {
 		$f['c_von_user_id'] = $this->getID();
 		$f['c_raum'] = $quidditch->room;
 		$f['c_typ'] = "N";
-		$f['c_farbe'] = $this->team->farbe;
+		if (isset($this->team)) { // Schiedsrichter hat kein Team
+			$f['c_farbe'] = $this->team->farbe;
+		}
 		schreibe_chat($f);
 	}
 	

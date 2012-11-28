@@ -201,6 +201,10 @@ if ($u_id) {
 				// Verbindung wurde abgebrochen -> Schleife verlassen
 				$beende_prozess=TRUE;
 			endif;
+        
+			// Quidditch
+			$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance();
+			$quidditch->doStack();
 
 		endwhile;
 

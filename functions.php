@@ -43,12 +43,6 @@ if ( !(isset($conn))) {
  exit;
 }
 
-// Quidditch
-if (isset($r_id)) {
-	$quidditch = \Netzhuffle\MainChat\Quidditch\Quidditch::getInstance($r_id);
-	$quidditch->doStack();
-}
-
 // Funktionen
 
 function onlinezeit($onlinezeit) {

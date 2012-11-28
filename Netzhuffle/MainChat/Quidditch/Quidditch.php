@@ -4,7 +4,7 @@ namespace Netzhuffle\MainChat\Quidditch;
 
 class Quidditch {
 	private static $instance;
-	private $room;
+	public $room;
 	public $runde = 0;
 	public $schiedsrichter;
 	public $team1;
@@ -16,7 +16,7 @@ class Quidditch {
 
 	private function __construct() {}
 
-	public static function getInstance($room = null) {
+	public static function getInstance() {
 		if(!self::$instance) {
 			//mysql_query("LOCK TABLES ".DB_PREFIX."data WRITE, ".DB_PREFIX."action a WRITE, ".DB_PREFIX."action WRITE, ".DB_PREFIX."user u WRITE, ".DB_PREFIX."user WRITE") or trigger_error(mysql_error(), E_USER_ERROR);
 			$result = mysql_query("SELECT data FROM quidditch") or trigger_error(mysql_error(), E_USER_ERROR);
@@ -26,8 +26,6 @@ class Quidditch {
 			}
 			if(!self::$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
 				self::$instance = new self;
-				if ($room === null) trigger_error("No room given", E_USER_ERROR);
-				self::$instance->room = $room;
 			}
 		}
 		return self::$instance;
@@ -115,6 +113,8 @@ class Quidditch {
 
 	private function start($modus) {
 		$neuesSpiel = self::$instance = new self;
+		if ($this->room === null) trigger_error("No room defined", E_USER_ERROR);
+		self::$instance->room = $this->room;
 		if(!$modus) $modus = "S-C";
 		$modus = explode("-", $modus, 3);
 		if(count($modus) == 1) {
