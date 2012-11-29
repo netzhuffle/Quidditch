@@ -12,7 +12,7 @@ class JaegerCP extends Jaeger {
 		$quidditch = Quidditch::getInstance();
 		if($befehl->befehl == "Positionjäger" && !$this->hasQuaffel()) {
 			$feld = mt_rand(0, 2);
-			$delay = (($feld+1)/2)+1.5;
+			$delay = mt_rand(2, 15);
 			$this->delay($delay, $quidditch->feldernamen[$feld]);
 		}
 	}

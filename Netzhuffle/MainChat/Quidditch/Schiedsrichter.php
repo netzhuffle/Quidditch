@@ -81,26 +81,22 @@ class Schiedsrichter extends Spieler {
 			$this->write("Position Treiber");
 		
 		} elseif($befehl == "Positionklatscher") {
-			$this->write("Ende. Weiter nix programmiert wurde.");
+			$this->write("Klatscher sind in");
+			$this->delay(1, "Dice");
+			$this->delay(2, "Positionklatscherdice");
+		
+		} elseif($befehl == "Positionklatscherdice") {
+			$this->write($quidditch->feldernamen[$this->die1feld] . " und " . $quidditch->feldernamen[$this->die2feld]);
+			$this->delay(3, "Write", "*Klatscher freigeb*");
 			// XXX
 
 		} elseif($befehl == "Waitingempty") {
 			if($this->lastcommand->befehl == "Quaffeldice") {
-				if($k1->kampfwurf > $k2->kampfwurf) {
-					$quidditch->quaffelSpieler = $quidditch->getSpieler($t1."Jäger1");
-					$this->write($t1." hat den Quaffel.");
-					$this->delay(1, "Tordrittel");
-				} elseif($k1->kampfwurf < $k2->kampfwurf) {
-					$quidditch->quaffelSpieler = $quidditch->getSpieler($t2."Jäger1");
-					$this->write($t2." hat den Quaffel.");
-					$this->delay(1, "Tordrittel");
-				} elseif($k1->erfolgswurf > $k2->erfolgswurf) {
-					$quidditch->quaffelSpieler = $quidditch->getSpieler($t1."Jäger1");
-					$this->write($t1." hat den Quaffel.");
-					$this->delay(1, "Tordrittel");
-				} elseif($k1->erfolgswurf < $k2->erfolgswurf) {
-					$quidditch->quaffelSpieler = $quidditch->getSpieler($t2."Jäger1");
-					$this->write($t2." hat den Quaffel.");
+				$kampfwurfGewinner = $this->kampfwurfGewinner($k1, $k2);
+				if($kampfwurfGewinner) {
+					$team = $kampfwurfGewinner->team;
+					$quidditch->quaffelSpieler = $team->jaeger1;
+					$this->write("$team->name hat den Quaffel.");
 					$this->delay(1, "Tordrittel");
 				} else {
 					$this->delay(1, "Quaffeldice");
@@ -154,6 +150,24 @@ class Schiedsrichter extends Spieler {
 
 		$this->die1feld = floor(($die1-1)/2);
 		$this->die2feld = floor(($die2-1)/2);
+	}
+	
+	private function kampfwurfGewinner($spieler1, $spieler2) {
+		if($spieler1->kampfwurf > $spieler2->kampfwurf) {
+			return $spieler1;
+		} elseif($spieler1->kampfwurf < $spieler2->kampfwurf) {
+			return $spieler2;
+		} elseif($spieler1->erfolgswurf > $spieler2->erfolgswurf) {
+			return $spieler1;
+		} elseif($spieler1->erfolgswurf < $spieler2->erfolgswurf) {
+			return $spieler2;
+		} elseif($spieler1->die2 > $spieler2->die2) {
+			return $spieler1;
+		} elseif($spieler1->die2 < $spieler2->die2) {
+			return $spieler2;
+		} else {
+			return null;
+		}
 	}
 
 	public function canDoCommand($befehl) {

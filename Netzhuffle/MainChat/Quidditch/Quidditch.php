@@ -3,6 +3,7 @@
 namespace Netzhuffle\MainChat\Quidditch;
 
 class Quidditch {
+	private static $instance;
 	public $room;
 	public $runde = 0;
 	public $schiedsrichter;
@@ -16,22 +17,25 @@ class Quidditch {
 	private function __construct() {}
 
 	public static function getInstance() {
-		mysql_query("LOCK TABLES quidditch WRITE, user READ LOCAL") or trigger_error(mysql_error(), E_USER_ERROR);
-		$result = mysql_query("SELECT data FROM quidditch") or trigger_error(mysql_error(), E_USER_ERROR);
-		$data = mysql_fetch_assoc($result);
-		if($data["data"]) {
-			$instance = unserialize($data["data"]);
+		if(!self::$instance) {
+			//mysql_query("LOCK TABLES quidditch WRITE, user READ LOCAL") or trigger_error(mysql_error(), E_USER_ERROR);
+			$result = mysql_query("SELECT data FROM quidditch") or trigger_error(mysql_error(), E_USER_ERROR);
+			$data = mysql_fetch_assoc($result);
+			if(trim($data["data"])) {
+				self::$instance = unserialize($data["data"]);
+			}
+			if(!self::$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
+				self::$instance = new self;
+			}
 		}
-		if(!$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
-			$instance = new self;
-		}
-		return $instance;
+		return self::$instance;
 	}
 
 	public function flush() {
 		$data = mysql_real_escape_string(serialize($this));
 		mysql_query("UPDATE quidditch SET data = '$data'") or trigger_error(mysql_error(), E_USER_ERROR);
-		mysql_query("UNLOCK TABLES") or trigger_error(mysql_error(), E_USER_ERROR);
+		self::$instance = null;
+		//mysql_query("UNLOCK TABLES") or trigger_error(mysql_error(), E_USER_ERROR);
 	}
 
 	public function getSpieler($name) {
@@ -109,6 +113,9 @@ class Quidditch {
 	}
 
 	private function start($modus) {
+		self::$instance = null;
+		$this->flush();
+		
 		if(!$modus) $modus = "S-C";
 		$modus = explode("-", $modus, 3);
 		if(count($modus) == 1) {

@@ -7,10 +7,11 @@ abstract class Spieler {
 	public $id = 1;
 	public $team;
 	private $commands = array();
+	public $isOut = false;
 	protected $lastcommand;
 	public $erfolgswurf = 0;
 	public $kampfwurf = 0;
-	protected $die2;
+	public $die2;
 	public $feld = 1;
 	
 	public function __construct($name, $team) {
@@ -107,7 +108,8 @@ abstract class Spieler {
 		$message = str_replace("%wuerfel%", "2 großen 6-seitigen Würfeln", $message);
 		$message .= " $die1 $die2. Summe=$summe.";
 		$quidditch = Quidditch::getInstance();
-		hidden_msg($this->name, $this->getID(), $this->team->farbe, $quidditch->room, $message);
+		$farbe = isset($this->team) ? $this->team->farbe : "";
+		hidden_msg($this->name, $this->getID(), $farbe, $quidditch->room, $message);
 		$this->erfolgswurf = $die1;
 		$this->kampfwurf = $summe;
 		$this->die2 = $die2;

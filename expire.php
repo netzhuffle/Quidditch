@@ -449,12 +449,12 @@ if ($zeit=="03:10") {
 					if (isset($STAT_DB_COLLECT) && strlen($STAT_DB_COLLECT)>0)
 					{
 						$o_vhost = $STAT_DB_COLLECT;
-					        $r1 = @mysql_query("SELECT COUNT(o_id) or trigger_error(mysql_error(), E_USER_ERROR) AS anzahl FROM online ",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
+					        $r1 = @mysql_query("SELECT COUNT(o_id) AS anzahl FROM online ",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					}
 					else
 					{
 						$o_vhost = @mysql_result($r0, $i, "o_vhost");
-					        $r1 = @mysql_query("SELECT COUNT(o_id) or trigger_error(mysql_error(), E_USER_ERROR) AS anzahl FROM online WHERE o_vhost='" . AddSlashes($o_vhost) . "' ",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
+					        $r1 = @mysql_query("SELECT COUNT(o_id) AS anzahl FROM online WHERE o_vhost='" . AddSlashes($o_vhost) . "' ",$conn) or trigger_error(mysql_error(), E_USER_ERROR);
 					}
 
 					if ($r1 > 0)
@@ -495,7 +495,7 @@ if ($zeit=="03:10") {
 
 			while (list($name, $nr) = each($onlinevhosts))
 			{
-				$r0 = mysql_query("SELECT SQL_BUFFER_RESULT c_users FROM chat WHERE DATE_FORMAT(c_timestamp,'%Y-%m-%d %H') or trigger_error(mysql_error(), E_USER_ERROR) = '$currentdate' AND c_host='" . AddSlashes($name) . "' ORDER BY c_users DESC",$conn2) or trigger_error(mysql_error(), E_USER_ERROR);
+				$r0 = mysql_query("SELECT SQL_BUFFER_RESULT c_users FROM chat WHERE DATE_FORMAT(c_timestamp,'%Y-%m-%d %H') = '$currentdate' AND c_host='" . AddSlashes($name) . "' ORDER BY c_users DESC",$conn2) or trigger_error(mysql_error(), E_USER_ERROR);
 
 				if ($r0)
 				{
@@ -504,7 +504,7 @@ if ($zeit=="03:10") {
 					{
 							/* Es war noch kein Eintrag vorhanden. Neuer Eintrag wird	*/
 							/* angelegt.																							*/
-						@mysql_query("INSERT INTO chat (c_timestamp, c_users, c_host) or trigger_error(mysql_error(), E_USER_ERROR) VALUES (NOW(),$nr,'" . AddSlashes($name) . "')",$conn2) or trigger_error(mysql_error(), E_USER_ERROR);
+						@mysql_query("INSERT INTO chat (c_timestamp, c_users, c_host) VALUES (NOW(),$nr,'" . AddSlashes($name) . "')",$conn2) or trigger_error(mysql_error(), E_USER_ERROR);
 					}
 					else
 					{
@@ -516,7 +516,7 @@ if ($zeit=="03:10") {
 
 						if ($nr > $currentnr)
 						{
-							@mysql_query("UPDATE chat SET c_users=$nr WHERE DATE_FORMAT(c_timestamp,'%Y-%m-%d %H') or trigger_error(mysql_error(), E_USER_ERROR) = '$currentdate' AND c_host='" . AddSlashes($name) . "'",$conn2) or trigger_error(mysql_error(), E_USER_ERROR);
+							@mysql_query("UPDATE chat SET c_users=$nr WHERE DATE_FORMAT(c_timestamp,'%Y-%m-%d %H') = '$currentdate' AND c_host='" . AddSlashes($name) . "'",$conn2) or trigger_error(mysql_error(), E_USER_ERROR);
 						}
 					}
 				}

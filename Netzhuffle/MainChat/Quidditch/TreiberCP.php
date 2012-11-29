@@ -12,7 +12,7 @@ class TreiberCP extends Treiber {
 		$quidditch = Quidditch::getInstance();
 		if($befehl->befehl == "Positiontreiber") {
 			$feld = mt_rand(0, 2);
-			$delay = ($feld/2)+1.5;
+			$delay = mt_rand(2, 15);
 			$this->delay($delay, $quidditch->feldernamen[$feld]);
 		}
 	}
