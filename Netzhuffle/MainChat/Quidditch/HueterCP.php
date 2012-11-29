@@ -2,13 +2,15 @@
 
 namespace Netzhuffle\MainChat\Quidditch;
 
-class HueterCP extends Hueter {
-	protected function act($befehl) {
-		parent::act($befehl);
-	}
+class HueterCP extends Hueter
+{
+    protected function act($befehl)
+    {
+        parent::act($befehl);
+    }
 
-	public function react($befehl) {
-		parent::react($befehl);
-	}
+    public function react($befehl)
+    {
+        parent::react($befehl);
+    }
 }
-?>
