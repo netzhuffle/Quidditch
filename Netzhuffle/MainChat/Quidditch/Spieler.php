@@ -9,13 +9,13 @@ abstract class Spieler
     public $team;
     private $commands = array();
     public $isOut = false;
-    protected $lastcommand;
-    public $erfolgswurf = 0;
-    public $kampfwurf = 0;
+    public $lastcommand;
+    public $erfolgswurf;
+    public $kampfwurf;
     public $die2;
-    public $feld = 1;
+    public $feld;
 
-    public function __construct($name, $team)
+    public function __construct($name, $team = null)
     {
         $this->name = $name;
         $this->id = $this->getID();
@@ -41,12 +41,10 @@ abstract class Spieler
         if ($befehl->befehl != "Write") {
             if ($this->canDoCommand($befehl)) {
                 $this->deleteCommands();
-                if ($befehl->befehl != "Dice" && $this->team && $this->team->isComputer) {
-                    $write = new Befehl($this, "Write", $befehl->befehl." ".$befehl->param);
-                    $write->execute();
-                }
                 $this->act($befehl);
                 $this->lastcommand = $befehl;
+            } elseif ($befehl->befehl == "Dice") {
+                $this->dice();
             }
         } else {
             $this->write($befehl->param);
@@ -55,17 +53,21 @@ abstract class Spieler
 
     public function canDoCommand($befehl)
     {
-        if($befehl->befehl == "Write") return true;
+        if ($befehl->befehl == "Write") {
+            return true;
+        }
+        if (!array_key_exists($befehl->befehl, $this->commands)) {
+            return false;
+        }
 
-        return array_key_exists($befehl->befehl, $this->commands) && $this->commands[$befehl->befehl] === (boolean) $befehl->param;
+        return in_array($befehl->param, $this->commands[$befehl->befehl]);
     }
 
     public function setCommands($commands)
     {
-        foreach ($commands as $key => $command) {
-            if (is_numeric($key)) {
-                $commands[$command] = false;
-                unset($commands[$key]);
+        foreach ($commands as $command => $params) {
+            if (!is_array($params)) {
+                $commands[$command] = array($params);
             }
         }
         $this->commands = $commands;
@@ -119,8 +121,8 @@ abstract class Spieler
         $message = str_replace("%user%", $this->name, $message);
         $message = str_replace("%wuerfel%", "2 großen 6-seitigen Würfeln", $message);
         $message .= " $die1 $die2. Summe=$summe.";
-        $quidditch = Quidditch::getInstance();
         $farbe = isset($this->team) ? $this->team->farbe : "";
+        $quidditch = Quidditch::getInstance();
         hidden_msg($this->name, $this->getID(), $farbe, $quidditch->room, $message);
         $this->erfolgswurf = $die1;
         $this->kampfwurf = $summe;

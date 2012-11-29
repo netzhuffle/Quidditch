@@ -6,16 +6,21 @@ class Quidditch
 {
     private static $instance;
     public $room;
-    public $runde = 0;
+    public $runde;
     public $schiedsrichter;
     public $team1;
     public $team2;
     public $quaffelSpieler;
-    public $multipleJaegerFly = false;
-    public $feldernamen = array("T", "M", "H");
-    private $stack = array();
+    public $multipleJaegerFly;
+    public $feldernamen;
+    private $stack;
 
-    private function __construct() {}
+    private function __construct($reset = false)
+    {
+        if ($reset) {
+            $this->reset();
+        }
+    }
 
     public static function getInstance()
     {
@@ -27,7 +32,7 @@ class Quidditch
                 self::$instance = unserialize($data["data"]);
             }
             if (!self::$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
-                self::$instance = new self;
+                self::$instance = new self(true);
             }
         }
 
@@ -40,6 +45,18 @@ class Quidditch
         mysql_query("UPDATE quidditch SET data = '$data'") or trigger_error(mysql_error(), E_USER_ERROR);
         self::$instance = null;
         //mysql_query("UNLOCK TABLES") or trigger_error(mysql_error(), E_USER_ERROR);
+    }
+
+    private function reset()
+    {
+        $this->runde = 0;
+        $this->feldernamen = array("T", "M", "H");
+        $this->multipleJaegerFly = false;
+        $this->stack = array();
+        $this->quaffelSpieler = null;
+        $this->schiedsrichter = null;
+        $this->team1 = null;
+        $this->team2 = null;
     }
 
     public function getSpieler($name)
@@ -83,6 +100,19 @@ class Quidditch
         }
 
         return $array;
+    }
+
+    public function getSpielerInDrittel($drittel)
+    {
+        $spieler = $this->getAllSpieler();
+        $drittelSpieler = array();
+        foreach ($spieler as $s) {
+            if (!($s instanceof Schiedsrichter) && $s->feld == $drittel) {
+                $drittelSpieler[] = $s;
+            }
+        }
+
+        return $drittelSpieler;
     }
 
     public function command($command, $u_nick)
@@ -134,14 +164,12 @@ class Quidditch
             $modus[1] = "C";
         }
 
-        $this->runde = 0;
-        $this->schiedsrichter = new Schiedsrichter("aSchiedsrichter", null);
+        $this->reset();
+        $this->schiedsrichter = new Schiedsrichter("aSchiedsrichter");
         $this->team1 = new Team($modus[0]);
         $this->team2 = new Team($modus[1]);
         $this->team1->setGegner($this->team2);
         $this->team2->setGegner($this->team1);
-        $this->quaffelSpieler = null;
-        $this->stack = array();
 
         $this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1), 1);
         $this->flush();
