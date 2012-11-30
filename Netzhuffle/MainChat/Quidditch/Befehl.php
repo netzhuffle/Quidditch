@@ -31,13 +31,16 @@ class Befehl
             $write = new self($this->wer->name, "Write", $this->befehl . " " . $this->param);
             $write->execute();
         }
-        if ($this->befehl == "Dice" || $this->wer->canDoCommand($this)) {
+        if ($this->wer->canDoCommand($this)) {
             $this->wer->doCommand($this);
             foreach ($quidditch->getAllSpieler() as $spieler) {
-                if ($spieler != $this->wer) {
+                if ($spieler->name != $this->wer->name) {
                     $spieler->react($this);
                 }
             }
+            $this->wer->lastcommand = $this;
+        } elseif ($this->befehl == "Dice") {
+            $this->wer->doCommand($this);
         } else { // keine Berechtigung für Befehl
             $fehler = new Befehl($quidditch->schiedsrichter, "Write", "(Befehl $this->befehl " . (isset($this->param) ? $this->param : "") . " von {$this->wer->name} momentan nicht erlaubt …)");
             $fehler->execute();

@@ -42,7 +42,6 @@ abstract class Spieler
             if ($this->canDoCommand($befehl)) {
                 $this->deleteCommands();
                 $this->act($befehl);
-                $this->lastcommand = $befehl;
             } elseif ($befehl->befehl == "Dice") {
                 $this->dice();
             }
