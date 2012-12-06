@@ -39,8 +39,8 @@ class Befehl
                 }
             }
             if ($this->befehl != "Write") {
-            	$this->wer->lastCommand = $this;
-        	}
+                $this->wer->lastCommand = $this;
+            }
         } else { // keine Berechtigung für Befehl
             if ($this->befehl == "Dice") {
                 $this->wer->doCommand($this); // trotzdem würfeln

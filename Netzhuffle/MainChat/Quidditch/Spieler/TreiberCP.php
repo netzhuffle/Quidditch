@@ -9,6 +9,7 @@ class TreiberCP extends Treiber
     protected function act($befehl)
     {
         parent::act($befehl);
+        // TODO Klatscherabfang & Klatscherabwurf
     }
 
     public function react($befehl)
