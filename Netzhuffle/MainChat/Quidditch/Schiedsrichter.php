@@ -35,6 +35,10 @@ class Schiedsrichter extends Spieler
                 $this->delay(1, "Write", "Runde $param, $qs->team->name hat den Quaffel.");
                 $this->delay(2, "Positionjäger");
             }
+            $spieler = $quidditch->getAllSpieler();
+            foreach ($spieler as $s) {
+                $s->isOut = false;
+            }
 
         } elseif ($befehl == "Quaffeldice") {
             $this->write("Kapitäne würfeln bitte um den Quaffel");
@@ -91,7 +95,7 @@ class Schiedsrichter extends Spieler
             $this->write($quidditch->feldernamen[$this->die1feld] . " und " . $quidditch->feldernamen[$this->die2feld]);
             $hasSpielerInDrittel = $this->setTreiberCommands();
             if (!$hasSpielerInDrittel) {
-                $this->delay(3, "Write", "Da sind keine Treiber");
+                $this->delay(3, "Write", "Da sind keine Treiber (oder keine Opfer)");
                 $this->delay(6, "Positionquaffel");
             } else {
                 $this->delay(3, "Write", "*Klatscher freigeb*");
@@ -102,7 +106,7 @@ class Schiedsrichter extends Spieler
             $this->write("The End.");
 
         } elseif ($befehl == "Waitingempty") {
-            if ($this->lastcommand->befehl == "Quaffeldice") {
+            if ($this->lastCommand->befehl == "Quaffeldice") {
                 $kampfwurfGewinner = $this->getKampfwurfGewinner($k1, $k2);
                 if ($kampfwurfGewinner) {
                     $team = $kampfwurfGewinner->team;
@@ -113,7 +117,7 @@ class Schiedsrichter extends Spieler
                     $this->delay(1, "Quaffeldice");
                 }
 
-            } elseif ($this->lastcommand->befehl == "Tordrittel") {
+            } elseif ($this->lastCommand->befehl == "Tordrittel") {
                 $qt = $qs->team; // QuaffelTeam
                 $qg = $qt->gegner; // QuaffelGegner
                 $tor = $qg->kapitaen->feld; // welches Feld für qg; als boolean gesehen: feld2 für qg, feld0 für qt
@@ -124,16 +128,16 @@ class Schiedsrichter extends Spieler
                 $this->write("T = $feld0, H = $feld2");
                 $this->delay(1, "Quaffeljäger");
 
-            } elseif ($this->lastcommand->befehl == "Quaffeljäger") {
+            } elseif ($this->lastCommand->befehl == "Quaffeljäger") {
                 $this->delay(1, "Positionjäger");
 
-            } elseif ($this->lastcommand->befehl == "Positionjäger") {
+            } elseif ($this->lastCommand->befehl == "Positionjäger") {
                 $this->delay(1, "Positionsucher");
 
-            } elseif ($this->lastcommand->befehl == "Positionsucher") {
+            } elseif ($this->lastCommand->befehl == "Positionsucher") {
                 $this->delay(1, "Positiontreiber");
 
-            } elseif ($this->lastcommand->befehl == "Positiontreiber") {
+            } elseif ($this->lastCommand->befehl == "Positiontreiber") {
                 $this->delay(1, "Positionklatscher");
             }
         }
@@ -148,29 +152,34 @@ class Schiedsrichter extends Spieler
             if (!count($this->waiting)) {
                 $this->delay(2, "Waitingempty");
             }
-            if ($this->lastcommand->befehl == "Quaffeljäger") {
+            if ($this->lastCommand->befehl == "Quaffeljäger") {
                 $quidditch->quaffelSpieler = $quidditch->getSpieler($befehl->befehl);
             }
 
-        } elseif ($befehl->befehl == "Klatscherwurf") {
-            if ($this->die1feld == $befehl->wer->feld) {
+        } elseif ($befehl->befehl == "Klatscherwurf" || $befehl->befehl == "Klatscherabwurf") {
+            if ($this->die1feld === $befehl->wer->feld) {
                 $this->die1feld = null;
-            } elseif ($this->die2feld == $befehl->wer->feld) {
+            } elseif ($this->die2feld === $befehl->wer->feld) {
                 $this->die2feld = null;
             }
             $this->setTreiberCommands();
-            $befehl->wer->setCommands(array("Dice" => null));
+
+        } elseif ($befehl->befehl == "Klatscherabfang") {
+            $this->setTreiberCommands();
 
         } elseif ($befehl->befehl == "Dice") {
-            if ($befehl->wer->lastcommand->befehl == "Klatscherwurf" || $befehl->wer->lastcommand->befehl == "Klatscherabwurf") {
+            if ($befehl->wer->lastCommand->befehl == "Klatscherwurf" || $befehl->wer->lastCommand->befehl == "Klatscherabwurf") {
                 if ($befehl->wer->erfolgswurf >= 4) {
-                    $quidditch->getSpieler($befehl->wer->lastcommand->param)->isOut = true;
-                    $this->write($befehl->wer->lastcommand->param . " is out!");
+                    $quidditch->getSpieler($befehl->wer->lastCommand->param)->isOut = true;
+                    $this->write($befehl->wer->lastCommand->param . " is out!");
                 }
-            }
-            $hasSpielerInDrittel = $this->setTreiberCommands();
-            if (!$hasSpielerInDrittel) {
-                $this->delay(6, "Positionquaffel");
+                $hasSpielerInDrittel = $this->setTreiberCommands();
+                if (!$hasSpielerInDrittel) {
+                    $this->delay(6, "Positionquaffel");
+                }
+
+            } elseif ($befehl->wer->lastCommand->befehl == "Klatscherabfang") {
+                $this->setTreiberCommands();
             }
         }
     }
@@ -181,8 +190,8 @@ class Schiedsrichter extends Spieler
         $die1 = $this->erfolgswurf;
         $die2 = $this->die2;
 
-        $this->die1feld = floor(($die1-1)/2);
-        $this->die2feld = floor(($die2-1)/2);
+        $this->die1feld = intval(floor(($die1-1)/2));
+        $this->die2feld = intval(floor(($die2-1)/2));
     }
 
     public function canDoCommand($befehl)
@@ -219,15 +228,31 @@ class Schiedsrichter extends Spieler
         for ($i = 0; $i <= 2; $i++) {
             $drittelSpieler = $quidditch->getSpielerInDrittel($i);
             foreach ($drittelSpieler as $spieler) {
-                if ($spieler instanceof Treiber && ($spieler->feld == $this->die1feld || $spieler->feld == $this->die2feld)) {
-                    $opfer = array();
-                    foreach ($drittelSpieler as $anderer) {
-                        if (!($anderer instanceof Treiber)) {
-                            $hasSpielerInDrittel = true;
-                            $opfer[] = $anderer->name;
+                if ($spieler instanceof Treiber) {
+                    if ($spieler->lastCommand->befehl == "Klatscherwurf" || $spieler->lastCommand->befehl == "Klatscherabfang" || $spieler->lastCommand->befehl == "Klatscherabwurf") {
+                        $spieler->setCommands(array("Dice" => null));
+                        $this->write($spieler->name . " ::"); // XXX
+                    } elseif ($spieler->lastCommand->befehl == "Dice" && $spieler->hasDoneKlatscherwurf()) {
+                        $spieler->setCommands(array("Klatscherabfang" => null));
+                        $this->write($spieler->name . " !!"); // XXX
+                    } elseif ($spieler->feld === $this->die1feld || $spieler->feld === $this->die2feld) {
+                        $opfer = array();
+                        foreach ($drittelSpieler as $anderer) {
+                            if (!($anderer instanceof Treiber)) {
+                                $hasSpielerInDrittel = true;
+                                $opfer[] = $anderer->name;
+                            }
                         }
+                        if ($spieler->hasKlatscher()) {
+                            $spieler->setCommands(array("Klatscherabwurf" => $opfer));
+                            $this->write($spieler->name . " ka " . join($opfer, ", ")); // XXX
+                        } else {
+                            $spieler->setCommands(array("Klatscherwurf" => $opfer));
+                            $this->write($spieler->name . " kw " . join($opfer, ", ")); // XXX
+                        }
+                    } else {
+                        $spieler->deleteCommands();
                     }
-                    $spieler->setCommands(array("Klatscherwurf" => $opfer));
                 }
             }
         }

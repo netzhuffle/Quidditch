@@ -17,6 +17,7 @@ class TreiberCP extends Treiber
             $feld = mt_rand(0, 2);
             $delay = mt_rand(2, 15);
             $this->delay($delay, $quidditch->feldernamen[$feld]);
+
         } elseif ($befehl->befehl == "Klatscherfreigeb") {
             if ($this->feld == $quidditch->schiedsrichter->die1feld || $this->feld == $quidditch->schiedsrichter->die2feld) {
                 $drittelSpieler = $quidditch->getSpielerInDrittel($this->feld);

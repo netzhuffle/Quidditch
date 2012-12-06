@@ -8,8 +8,8 @@ abstract class Spieler
     public $id = 1;
     public $team;
     private $commands = array();
-    public $isOut = false;
-    public $lastcommand;
+    public $isOut;
+    public $lastCommand;
     public $erfolgswurf;
     public $kampfwurf;
     public $die2;
@@ -146,6 +146,9 @@ abstract class Spieler
 
     protected function delay($delay, $befehl, $param = null)
     {
+    	if (!($this instanceof Schiedsrichter)) {
+        	$delay = 1; // TODO remove: Temporary overwrite for faster testing
+        }
         $befehl = new Befehl($this, $befehl, $param);
         Quidditch::getInstance()->addStackItem($befehl, $delay);
     }

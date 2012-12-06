@@ -38,7 +38,7 @@ class Befehl
                     $spieler->react($this);
                 }
             }
-            $this->wer->lastcommand = $this;
+            $this->wer->lastCommand = $this;
         } elseif ($this->befehl == "Dice") {
             $this->wer->doCommand($this);
         } else { // keine Berechtigung für Befehl
