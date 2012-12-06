@@ -39,9 +39,10 @@ class Befehl
                 }
             }
             $this->wer->lastCommand = $this;
-        } elseif ($this->befehl == "Dice") {
-            $this->wer->doCommand($this);
         } else { // keine Berechtigung für Befehl
+            if ($this->befehl == "Dice") {
+                $this->wer->doCommand($this); // trotzdem würfeln
+            }
             $fehler = new Befehl($quidditch->schiedsrichter, "Write", "(Befehl $this->befehl " . (isset($this->param) ? $this->param : "") . " von {$this->wer->name} momentan nicht erlaubt …)");
             $fehler->execute();
         }

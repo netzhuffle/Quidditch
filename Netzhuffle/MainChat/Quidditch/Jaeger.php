@@ -16,6 +16,6 @@ class Jaeger extends Spieler
 
     protected function hasQuaffel()
     {
-        return Quidditch::getInstance()->quaffelSpieler->name == $this->name;
+        return Quidditch::getInstance()->quaffel->besitzer->name == $this->name;
     }
 }

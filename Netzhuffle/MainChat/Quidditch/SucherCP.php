@@ -15,7 +15,7 @@ class SucherCP extends Sucher
         $quidditch = Quidditch::getInstance();
         if ($befehl->befehl == "Positionsucher") {
             $feld = mt_rand(0, 1) * 2; // = $feld entweder 0 oder 2
-            $delay = mt_rand(2, 15);
+            $delay = 1;//mt_rand(2, 15); // XXX
             $this->delay($delay, $quidditch->feldernamen[$feld]);
         }
     }

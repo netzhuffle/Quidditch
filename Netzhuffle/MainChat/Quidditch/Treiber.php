@@ -5,15 +5,12 @@ namespace Netzhuffle\MainChat\Quidditch;
 class Treiber extends Spieler
 {
     private $didKlatscherwurf;
-    private $hasKlatscher;
 
     protected function act($befehl)
     {
         parent::act($befehl);
         if ($befehl->befehl == "Klatscherwurf") {
             $this->didKlatscherwurf = true;
-        } elseif ($befehl->befehl == "Dice" && $this->lastCommand->befehl == "Klatscherabfang" && $this->erfolgswurf >= 4) {
-            $this->hasKlatscher = true;
         }
     }
 
@@ -22,7 +19,6 @@ class Treiber extends Spieler
         parent::react($befehl);
         if ($befehl->befehl == "Klatscherfreigeb") {
             $this->didKlatscherwurf = false;
-            $this->hasKlatscher = false;
         }
     }
 
@@ -33,6 +29,10 @@ class Treiber extends Spieler
 
     public function hasKlatscher()
     {
-        return $this->hasKlatscher;
+        $quidditch = Quidditch::getInstance();
+        $hasKlatscher1 = $quidditch->klatscher1->besitzer && $quidditch->klatscher1->besitzer->name == $this->name;
+        $hasKlatscher2 = $quidditch->klatscher2->besitzer && $quidditch->klatscher2->besitzer->name == $this->name;
+
+        return $hasKlatscher1 || $hasKlatscher2;
     }
 }

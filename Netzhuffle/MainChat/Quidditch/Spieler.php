@@ -95,7 +95,7 @@ abstract class Spieler
     {
         if ($this->team && $this->team->isComputer && $this->name == $this->team->kapitaen->name) {
             $quidditch = Quidditch::getInstance();
-            $hasTeamQuaffel = ($quidditch->quaffelSpieler && $quidditch->quaffelSpieler->team->name == $this->team->name);
+            $hasTeamQuaffel = ($quidditch->quaffel->besitzer && $quidditch->quaffel->besitzer->team->name == $this->team->name);
             if ($befehl->befehl == "Quaffeldice") {
                 $this->delay(2, "Dice");
             } elseif ($befehl->befehl == "Tordrittel" && !$hasTeamQuaffel) {
@@ -146,9 +146,6 @@ abstract class Spieler
 
     protected function delay($delay, $befehl, $param = null)
     {
-    	if (!($this instanceof Schiedsrichter)) {
-        	$delay = 1; // TODO remove: Temporary overwrite for faster testing
-        }
         $befehl = new Befehl($this, $befehl, $param);
         Quidditch::getInstance()->addStackItem($befehl, $delay);
     }

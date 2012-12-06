@@ -10,7 +10,10 @@ class Quidditch
     public $schiedsrichter;
     public $team1;
     public $team2;
-    public $quaffelSpieler;
+    public $klatscher1;
+    public $klatscher2;
+    public $quaffel;
+    public $schnatz;
     public $multipleJaegerFly;
     public $feldernamen;
     private $stack;
@@ -53,10 +56,13 @@ class Quidditch
         $this->feldernamen = array("T", "M", "H");
         $this->multipleJaegerFly = false;
         $this->stack = array();
-        $this->quaffelSpieler = null;
         $this->schiedsrichter = null;
         $this->team1 = null;
         $this->team2 = null;
+        $this->klatscher1 = null;
+        $this->klatscher2 = null;
+        $this->quaffel = null;
+        $this->schnatz = null;
     }
 
     public function getSpieler($name)
@@ -170,6 +176,10 @@ class Quidditch
         $this->team2 = new Team($modus[1]);
         $this->team1->setGegner($this->team2);
         $this->team2->setGegner($this->team1);
+        $this->klatscher1 = new Ball\Klatscher();
+        $this->klatscher2 = new Ball\Klatscher();
+        $this->quaffel = new Ball\Quaffel();
+        $this->schnatz = new Ball\Schnatz();
 
         $this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1), 1);
         $this->flush();
