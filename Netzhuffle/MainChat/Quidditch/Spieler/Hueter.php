@@ -1,6 +1,6 @@
 <?php
 
-namespace Netzhuffle\MainChat\Quidditch;
+namespace Netzhuffle\MainChat\Quidditch\Spieler;
 
 class Hueter extends Spieler
 {

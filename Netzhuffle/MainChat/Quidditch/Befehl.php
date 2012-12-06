@@ -17,7 +17,7 @@ class Befehl
 
     private function getSpieler($name)
     {
-        if ($name instanceof Spieler) {
+        if ($name instanceof Spieler\Spieler) {
             return $name;
         } else {
             return Quidditch::getInstance()->getSpieler($name);
@@ -38,7 +38,9 @@ class Befehl
                     $spieler->react($this);
                 }
             }
-            $this->wer->lastCommand = $this;
+            if ($this->befehl != "Write") {
+            	$this->wer->lastCommand = $this;
+        	}
         } else { // keine Berechtigung für Befehl
             if ($this->befehl == "Dice") {
                 $this->wer->doCommand($this); // trotzdem würfeln

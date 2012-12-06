@@ -1,6 +1,8 @@
 <?php
 
-namespace Netzhuffle\MainChat\Quidditch;
+namespace Netzhuffle\MainChat\Quidditch\Spieler;
+
+use Netzhuffle\MainChat\Quidditch\Quidditch;
 
 class Schiedsrichter extends Spieler
 {
@@ -182,8 +184,8 @@ class Schiedsrichter extends Spieler
                 } else {
                     $this->write($befehl->wer->lastCommand->param . " is still in!");
                 }
-                $hasSpielerInDrittel = $this->setTreiberCommands();
-                if (!$hasSpielerInDrittel) {
+                $notEnd = $this->setTreiberCommands();
+                if (!$notEnd) {
                     $this->delay(6, "Positionquaffel");
                 }
 
@@ -238,7 +240,7 @@ class Schiedsrichter extends Spieler
     private function setTreiberCommands()
     {
         $quidditch = Quidditch::getInstance();
-        $hasSpielerInDrittel = false;
+        $end = true;
 
         for ($i = 0; $i <= 2; $i++) {
             $drittelSpieler = $quidditch->getSpielerInDrittel($i);
@@ -246,15 +248,17 @@ class Schiedsrichter extends Spieler
                 if ($spieler instanceof Treiber) {
                     if ($spieler->lastCommand->befehl == "Klatscherwurf" || $spieler->lastCommand->befehl == "Klatscherabfang" || $spieler->lastCommand->befehl == "Klatscherabwurf") {
                         $spieler->setCommands(array("Dice" => null));
+                        $end = false;
                         $this->write($spieler->name . " ::"); // XXX
                     } elseif ($spieler->lastCommand->befehl == "Dice" && $spieler->hasDoneKlatscherwurf() && $spieler->feld == $quidditch->klatscher2->feld && !$quidditch->klatscher2->used) {
                         $spieler->setCommands(array("Klatscherabfang" => null));
+                        $end = false;
                         $this->write($spieler->name . " !!"); // XXX
                     } elseif ($spieler->feld == $quidditch->klatscher1->feld && !$quidditch->klatscher1->used || $spieler->feld == $quidditch->klatscher2->feld && !$quidditch->klatscher2->used) {
                         $opfer = array();
                         foreach ($drittelSpieler as $anderer) {
                             if (!($anderer instanceof Treiber)) {
-                                $hasSpielerInDrittel = true;
+                                $end = false;
                                 $opfer[] = $anderer->name;
                             }
                         }
@@ -267,12 +271,13 @@ class Schiedsrichter extends Spieler
                         }
                     } else {
                         $spieler->deleteCommands();
+                        $this->write($spieler->name . " –"); // XXX
                     }
                 }
             }
         }
 
-        return $hasSpielerInDrittel;
+        return !$end;
     }
 
 }

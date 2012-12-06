@@ -1,6 +1,8 @@
 <?php
 
-namespace Netzhuffle\MainChat\Quidditch;
+namespace Netzhuffle\MainChat\Quidditch\Spieler;
+
+use Netzhuffle\MainChat\Quidditch\Quidditch;
 
 class Treiber extends Spieler
 {

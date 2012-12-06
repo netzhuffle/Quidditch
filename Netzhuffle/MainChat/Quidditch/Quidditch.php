@@ -113,7 +113,7 @@ class Quidditch
         $spieler = $this->getAllSpieler();
         $drittelSpieler = array();
         foreach ($spieler as $s) {
-            if (!($s instanceof Schiedsrichter) && $s->feld == $drittel) {
+            if (!($s instanceof Spieler\Schiedsrichter) && $s->feld == $drittel) {
                 $drittelSpieler[] = $s;
             }
         }
@@ -171,7 +171,7 @@ class Quidditch
         }
 
         $this->reset();
-        $this->schiedsrichter = new Schiedsrichter("aSchiedsrichter");
+        $this->schiedsrichter = new Spieler\Schiedsrichter("aSchiedsrichter");
         $this->team1 = new Team($modus[0]);
         $this->team2 = new Team($modus[1]);
         $this->team1->setGegner($this->team2);

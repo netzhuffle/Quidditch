@@ -1,6 +1,9 @@
 <?php
 
-namespace Netzhuffle\MainChat\Quidditch;
+namespace Netzhuffle\MainChat\Quidditch\Spieler;
+
+use Netzhuffle\MainChat\Quidditch\Quidditch;
+use Netzhuffle\MainChat\Quidditch\Befehl;
 
 abstract class Spieler
 {

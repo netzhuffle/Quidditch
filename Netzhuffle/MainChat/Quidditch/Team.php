@@ -23,21 +23,21 @@ class Team
         $this->name = $name;
         if ($name == "C" || $name == "X") {
             $this->isComputer = true;
-            $this->jaeger1 = new JaegerCP($name."Jäger1", $this);
-            $this->jaeger2 = new JaegerCP($name."Jäger2", $this);
-            $this->jaeger3 = new JaegerCP($name."Jäger3", $this);
-            $this->hueter = new HueterCP($name."Hüter", $this);
-            $this->treiber1 = new TreiberCP($name."Treiber1", $this);
-            $this->treiber2 = new TreiberCP($name."Treiber2", $this);
-            $this->sucher = new SucherCP($name."Sucher", $this);
+            $this->jaeger1 = new Spieler\JaegerCP($name."Jäger1", $this);
+            $this->jaeger2 = new Spieler\JaegerCP($name."Jäger2", $this);
+            $this->jaeger3 = new Spieler\JaegerCP($name."Jäger3", $this);
+            $this->hueter = new Spieler\HueterCP($name."Hüter", $this);
+            $this->treiber1 = new Spieler\TreiberCP($name."Treiber1", $this);
+            $this->treiber2 = new Spieler\TreiberCP($name."Treiber2", $this);
+            $this->sucher = new Spieler\SucherCP($name."Sucher", $this);
         } else {
-            $this->jaeger1 = new Jaeger($name."Jäger1", $this);
-            $this->jaeger2 = new Jaeger($name."Jäger2", $this);
-            $this->jaeger3 = new Jaeger($name."Jäger3", $this);
-            $this->hueter = new Hueter($name."Hüter", $this);
-            $this->treiber1 = new Treiber($name."Treiber1", $this);
-            $this->treiber2 = new Treiber($name."Treiber2", $this);
-            $this->sucher = new Sucher($name."Sucher", $this);
+            $this->jaeger1 = new Spieler\Jaeger($name."Jäger1", $this);
+            $this->jaeger2 = new Spieler\Jaeger($name."Jäger2", $this);
+            $this->jaeger3 = new Spieler\Jaeger($name."Jäger3", $this);
+            $this->hueter = new Spieler\Hueter($name."Hüter", $this);
+            $this->treiber1 = new Spieler\Treiber($name."Treiber1", $this);
+            $this->treiber2 = new Spieler\Treiber($name."Treiber2", $this);
+            $this->sucher = new Spieler\Sucher($name."Sucher", $this);
         }
         $this->kapitaen = $this->sucher;
     }
