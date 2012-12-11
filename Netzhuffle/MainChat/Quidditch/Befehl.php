@@ -27,11 +27,11 @@ class Befehl
     public function execute()
     {
         $quidditch = Quidditch::getInstance();
-        if ($this->befehl != "Write" && $this->befehl != "Dice" && isset($this->wer->team) && $this->wer->team->isComputer) {
-            $write = new self($this->wer->name, "Write", $this->befehl . " " . $this->param);
-            $write->execute();
-        }
         if ($this->wer->canDoCommand($this)) {
+			if ($this->befehl != "Write" && $this->befehl != "WriteNotAllowed" && $this->befehl != "Dice" && isset($this->wer->team) && $this->wer->team->isComputer) {
+				$write = new self($this->wer->name, "Write", $this->befehl . " " . $this->param);
+				$write->execute();
+			}
             $this->wer->doCommand($this);
             foreach ($quidditch->getAllSpieler() as $spieler) {
                 if ($spieler->name != $this->wer->name) {
@@ -44,9 +44,10 @@ class Befehl
         } else { // keine Berechtigung für Befehl
             if ($this->befehl == "Dice") {
                 $this->wer->doCommand($this); // trotzdem würfeln
-            }
-            $fehler = new Befehl($quidditch->schiedsrichter, "Write", "(Befehl $this->befehl " . (isset($this->param) ? $this->param : "") . " von {$this->wer->name} momentan nicht erlaubt …)");
-            $fehler->execute();
+            } elseif ($this->befehl != "Write" && isset($this->wer->team) && $this->wer->team->isComputer) {
+				$write = new self($this->wer->name, "WriteNotAllowed", $this->befehl . " " . $this->param);
+				$write->execute();
+			}
         }
     }
 }

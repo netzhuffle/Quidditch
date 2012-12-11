@@ -200,9 +200,9 @@ class Schiedsrichter extends Spieler
         }
     }
 
-    protected function dice()
+    protected function dice($isAllowed = true)
     {
-        parent::dice();
+        parent::dice($isAllowed);
         $die1 = $this->erfolgswurf;
         $die2 = $this->die2;
 

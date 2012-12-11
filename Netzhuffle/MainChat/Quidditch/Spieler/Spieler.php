@@ -41,21 +41,21 @@ abstract class Spieler
 
     public function doCommand($befehl)
     {
-        if ($befehl->befehl != "Write") {
+        if ($befehl->befehl != "Write" && $befehl->befehl != "WriteNotAllowed") {
             if ($this->canDoCommand($befehl)) {
-                $this->deleteCommands();
                 $this->act($befehl);
+                $this->deleteCommands();
             } elseif ($befehl->befehl == "Dice") {
-                $this->dice();
+                $this->dice(false);
             }
         } else {
-            $this->write($befehl->param);
+            $this->write($befehl->param, $befehl->befehl == "Write");
         }
     }
 
     public function canDoCommand($befehl)
     {
-        if ($befehl->befehl == "Write") {
+        if ($befehl->befehl == "Write" || $befehl->befehl == "WriteNotAllowed") {
             return true;
         }
         if (!array_key_exists($befehl->befehl, $this->commands)) {
@@ -89,7 +89,7 @@ abstract class Spieler
                 $this->feld = array_search($befehl->befehl, $quidditch->feldernamen);
                 break;
             case "Dice":
-                $this->dice();
+                $this->dice($this->canDoCommand($befehl));
                 break;
         }
     }
@@ -112,7 +112,7 @@ abstract class Spieler
         }
     }
 
-    protected function dice()
+    protected function dice($isAllowed = true)
     {
         global $t;
 
@@ -123,6 +123,9 @@ abstract class Spieler
         $message = str_replace("%user%", $this->name, $message);
         $message = str_replace("%wuerfel%", "2 großen 6-seitigen Würfeln", $message);
         $message .= " $die1 $die2. Summe=$summe.";
+        if (!$isAllowed) {
+        	$message = "<s>" . $message . "</s>";
+        }
         $farbe = isset($this->team) ? $this->team->farbe : "";
         $quidditch = Quidditch::getInstance();
         hidden_msg($this->name, $this->getID(), $farbe, $quidditch->room, $message);
@@ -131,12 +134,15 @@ abstract class Spieler
         $this->die2 = $die2;
     }
 
-    protected function write($message)
+    protected function write($message, $isAllowed = true)
     {
         require_once 'functions.php-func-html_parse.php';
         $quidditch = Quidditch::getInstance();
         $f = array();
         $f['c_text'] = html_parse(false, htmlspecialchars($message));
+        if (!$isAllowed) {
+        	$f['c_text'] = "<s>" . $f['c_text'] . "</s>";
+        }
         $f['c_von_user'] = $this->name;
         $f['c_von_user_id'] = $this->getID();
         $f['c_raum'] = $quidditch->room;
