@@ -46,6 +46,14 @@ class Schiedsrichter extends Spieler
             $quidditch->klatscher2->besitzer = null;
             $quidditch->klatscher1->used = false;
             $quidditch->klatscher2->used = false;
+            $quidditch->klatscher1->opfer = null;
+            $quidditch->klatscher2->opfer = null;
+            $quidditch->klatscher1->hitTime = null;
+            $quidditch->klatscher2->hitTime = null;
+            $quidditch->klatscher1->hitBy = null;
+            $quidditch->klatscher2->hitBy = null;
+            $quidditch->klatscher1->blocked = false;
+            $quidditch->klatscher2->blocked = false;
 
         } elseif ($befehl == "Quaffeldice") {
             $this->write("Kapitäne würfeln bitte um den Quaffel");
@@ -110,6 +118,9 @@ class Schiedsrichter extends Spieler
                 $this->delay(3, "Write", "*Klatscher freigeb*");
                 $this->delay(3, "Klatscherfreigeb");
             }
+        
+        } elseif ($befehl == "Treiberende") {
+        	$this->write("Treiberende");
 
         } elseif ($befehl == "Positionquaffel") {
             $this->write("The End.");
@@ -167,10 +178,14 @@ class Schiedsrichter extends Spieler
 
         } elseif ($befehl->befehl == "Klatscherwurf" || $befehl->befehl == "Klatscherabfang") {
             if ($befehl->wer->feld == $quidditch->klatscher1->feld && !$quidditch->klatscher1->used) {
-                $quidditch->klatscher1->used = true;
+            	$klatscher = $quidditch->klatscher1;
             } elseif ($befehl->wer->feld == $quidditch->klatscher2->feld) {
-                $quidditch->klatscher2->used = true;
+            	$klatscher = $quidditch->klatscher2;
             }
+			$klatscher->used = true;
+			$klatscher->hitBy = $befehl->wer;
+			$klatscher->opfer = $quidditch->getSpieler($befehl->param);
+			$befehl->wer->lastHitKlatscher = $klatscher;
             $this->setTreiberCommands($befehl);
 
         } elseif ($befehl->befehl == "Klatscherabfang") {
@@ -178,15 +193,15 @@ class Schiedsrichter extends Spieler
 
         } elseif ($befehl->befehl == "Dice") {
             if ($befehl->wer->lastCommand->befehl == "Klatscherwurf" || $befehl->wer->lastCommand->befehl == "Klatscherabwurf") {
-                if ($befehl->wer->erfolgswurf >= 4) {
-                    $quidditch->getSpieler($befehl->wer->lastCommand->param)->isOut = true;
-                    $this->write($befehl->wer->lastCommand->param . " is out!");
-                } else {
-                    $this->write($befehl->wer->lastCommand->param . " is still in!");
+                $treiber = $befehl->wer;
+                $klatscher = $treiber->lastHitKlatscher;
+                if ($treiber->erfolgswurf >= 4) {
+                	$klatscher->hitTime = time();
+                    $klatscher->opfer->isOut = true;
                 }
                 $end = $this->setTreiberCommands($befehl);
                 if ($end) {
-                    $this->delay(6, "Positionquaffel");
+                    $this->delay(6, "Treiberende");
                 }
 
             } elseif ($befehl->wer->lastCommand->befehl == "Klatscherabfang") {

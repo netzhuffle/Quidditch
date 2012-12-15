@@ -40,6 +40,15 @@ class TreiberCP extends Treiber
                     $this->delay(2, "Dice");
                 }
             }
+        } elseif ($befehl->befehl == "Dice" && $befehl->wer->erfolgswurf >= 4) {
+        	$lastCommand = isset($befehl->wer->lastCommand) ? $befehl->wer->lastCommand->befehl : "";
+        	if ($lastCommand == "Klatscherwurf" || $lastCommand == "Klatscherabwurf") {
+        		$opferTeam = substr($befehl->wer->lastCommand->param, 0, 1); // TODO richtig?
+        		if ($opferTeam == $this->team->name) {
+        			$this->delay(3, "Abblocken");
+        			$this->delay(4, "Dice");
+        		}
+        	}
         }
     }
 }

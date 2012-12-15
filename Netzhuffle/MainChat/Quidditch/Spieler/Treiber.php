@@ -6,6 +6,7 @@ use Netzhuffle\MainChat\Quidditch\Quidditch;
 
 class Treiber extends Spieler
 {
+	public $lastHitKlatscher;
     private $didKlatscherwurf;
 
     protected function act($befehl)
