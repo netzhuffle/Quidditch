@@ -1,0 +1,77 @@
+<?php
+namespace Netzhuffle\MainChat\Test\Quidditch;
+use Netzhuffle\Quidditch\Quidditch;
+use Netzhuffle\MainChat\Database;
+use Netzhuffle\Quidditch\Ball\Quaffel;
+use Netzhuffle\Quidditch\Team;
+use Netzhuffle\Quidditch\Spieler\Schiedsrichter;
+
+class QuidditchTest extends \PHPUnit_Framework_TestCase
+{
+    protected $quidditch;
+    
+    public function setUp()
+    {
+        $this->quidditch = Quidditch::getInstance(true);
+        $this->quidditch->team1 = new Team('C');
+        $this->quidditch->team2 = new Team('X');
+        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter');
+    }
+    
+    public function testGetInstance()
+    {
+        $this
+            ->assertInstanceOf('\Netzhuffle\Quidditch\Quidditch',
+                $this->quidditch);
+    }
+    
+    public function testGetInstanceReset()
+    {
+        $quaffel = new Quaffel();
+        $this->quidditch->quaffel = $quaffel;
+        $quaffel->feld = 1;
+        $this->quidditch = Quidditch::getInstance(true);
+        
+        $this
+            ->assertInstanceOf('\Netzhuffle\Quidditch\Quidditch',
+                $this->quidditch);
+        $this->assertNotEquals($quaffel, $this->quidditch->quaffel);
+    }
+    
+    public function testGetAllSpieler()
+    {
+        $this->assertCount(15, $this->quidditch->getAllSpieler());
+    }
+    
+    public function testGetSpieler()
+    {
+        $spieler = $this->quidditch->getSpieler('XJäger3');
+        $this->assertEquals($this->quidditch->team2->jaeger3, $spieler);
+    }
+    
+    public function testGetSpielerSchiedsrichter()
+    {
+        $spieler = $this->quidditch->getSpieler('aSchiedsrichter');
+        $this->assertEquals($this->quidditch->schiedsrichter, $spieler);
+    }
+    
+    public function testGetSpielerUnknown()
+    {
+        $spieler = $this->quidditch->getSpieler('HJäger2');
+        $this->assertNull($spieler);
+    }
+    
+    public function testGetSpielerInDrittel()
+    {
+        $this->quidditch->team1->jaeger2->feld = 1;
+        $this->quidditch->team1->sucher->feld = 1;
+        $this->quidditch->team2->treiber1->feld = 1;
+        $this->quidditch->team1->jaeger3->feld = 0;
+        $this->quidditch->team2->sucher->feld = 2;
+        $this->quidditch->team2->jaeger2->feld = 2;
+        
+        $this->assertCount(3, $this->quidditch->getSpielerInDrittel(1));
+    }
+    
+    // TODO Test commands and stacks
+}

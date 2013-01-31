@@ -26,20 +26,11 @@ class Quidditch
         }
     }
     
-    public static function getInstance($reset = false, $loadNew = false)
+    public static function getInstance($reset = false)
     {
-        if ($loadNew || !self::$instance) {
-            $db = Database::getInstance();
-            //mysql_query("LOCK TABLES quidditch WRITE, user READ LOCAL") or trigger_error(mysql_error(), E_USER_ERROR);
-            $result = $db->query("SELECT data FROM quidditch")
-                or trigger_error($db->error, E_USER_ERROR);
-            $data = $result->fetch_assoc();
-            if (trim($data["data"])) {
-                self::$instance = @unserialize($data["data"]);
-            }
-            if (!self::$instance) { // z.B. wenn fehlerhafter Wert in Datenbank
-                self::$instance = new self(true);
-            }
+        if (!self::$instance) {
+            self::$instance = new self(true);
+            $reset = false;
         }
         
         if ($reset) {
@@ -47,18 +38,6 @@ class Quidditch
         }
         
         return self::$instance;
-    }
-    
-    public function flush()
-    {
-        $db = Database::getInstance();
-        $stmt = $db->prepare("UPDATE quidditch SET data = ?")
-            or trigger_error($db->error, E_USER_ERROR);
-        $data = serialize($this);
-        $stmt->bind_param('s', $data);
-        $stmt->execute() or trigger_error($stmt->error, E_USER_ERROR);
-        self::$instance = null;
-        //mysql_query("UNLOCK TABLES") or trigger_error(mysql_error(), E_USER_ERROR);
     }
     
     private function reset()

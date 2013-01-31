@@ -21,22 +21,8 @@ abstract class Spieler
     public function __construct($name, $team = null)
     {
         $this->name = $name;
-        $this->id = $this->getID();
         $this->team = $team;
         $this->commands = array();
-    }
-    
-    private function getID()
-    {
-        $result = Database::getInstance()
-            ->query(
-                "SELECT u_id FROM user WHERE u_nick = '$this->name' LIMIT 1")
-            or trigger_error(mysql_error(), E_USER_ERROR);
-        if (!($id = $result->fetch_assoc())) {
-            trigger_error("Kein User mit Name $this->name", E_USER_ERROR);
-        }
-        
-        return $id["u_id"];
     }
     
     public function canDoCommand($befehl)
@@ -163,21 +149,11 @@ abstract class Spieler
     
     protected function write($message, $isAllowed = true)
     {
-        require_once 'functions.php-func-html_parse.php';
         $quidditch = Quidditch::getInstance();
-        $f = array();
-        $f['c_text'] = html_parse(false, htmlspecialchars($message));
         if (!$isAllowed) {
-            $f['c_text'] = "<s>" . $f['c_text'] . "</s>";
+            $message = "<s>$message</s>";
         }
-        $f['c_von_user'] = $this->name;
-        $f['c_von_user_id'] = $this->getID();
-        $f['c_raum'] = $quidditch->room;
-        $f['c_typ'] = "N";
-        if (isset($this->team)) { // Schiedsrichter hat kein Team
-            $f['c_farbe'] = $this->team->farbe;
-        }
-        schreibe_chat($f);
+        // todo write to chat
     }
     
     protected function delay($delay, $befehl, $param = null)

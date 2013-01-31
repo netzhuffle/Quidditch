@@ -9,7 +9,7 @@ class Schiedsrichter extends Spieler
     private $die2feld;
     private $waiting = array();
     
-    protected function actDice($befehl)
+    public function actDice($befehl)
     {
         parent::actDice($befehl);
         $die1 = $this->erfolgswurf;
