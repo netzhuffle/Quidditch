@@ -1,7 +1,6 @@
 <?php
 namespace Netzhuffle\MainChat\Test\Quidditch;
 use Netzhuffle\Quidditch\Quidditch;
-use Netzhuffle\MainChat\Database;
 use Netzhuffle\Quidditch\Ball\Quaffel;
 use Netzhuffle\Quidditch\Team;
 use Netzhuffle\Quidditch\Spieler\Schiedsrichter;
@@ -12,29 +11,18 @@ class QuidditchTest extends \PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $this->quidditch = Quidditch::getInstance(true);
-        $this->quidditch->team1 = new Team('C');
-        $this->quidditch->team2 = new Team('X');
-        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter');
+        $this->quidditch = new Quidditch();
+        $this->quidditch->team1 = new Team('C', $this->quidditch);
+        $this->quidditch->team2 = new Team('X', $this->quidditch);
+        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter', $this->quidditch);
     }
     
-    public function testGetInstance()
-    {
-        $this
-            ->assertInstanceOf('\Netzhuffle\Quidditch\Quidditch',
-                $this->quidditch);
-    }
-    
-    public function testGetInstanceReset()
+    public function testReset()
     {
         $quaffel = new Quaffel();
         $this->quidditch->quaffel = $quaffel;
         $quaffel->feld = 1;
-        $this->quidditch = Quidditch::getInstance(true);
-        
-        $this
-            ->assertInstanceOf('\Netzhuffle\Quidditch\Quidditch',
-                $this->quidditch);
+        $this->quidditch = new Quidditch();
         $this->assertNotEquals($quaffel, $this->quidditch->quaffel);
     }
     

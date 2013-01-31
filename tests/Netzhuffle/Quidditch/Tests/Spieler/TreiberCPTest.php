@@ -21,12 +21,12 @@ class TreiberCPTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = Quidditch::getInstance(true);
+        $this->quidditch = new Quidditch();
         $this->klatscher1 = $this->quidditch->klatscher1 = new Klatscher();
         $this->klatscher2 = $this->quidditch->klatscher2 = new Klatscher();
-        $this->quidditch->team1 = new Team("X");
-        $this->quidditch->team2 = new Team("C");
-        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter');
+        $this->quidditch->team1 = new Team("X", $this->quidditch);
+        $this->quidditch->team2 = new Team("C", $this->quidditch);
+        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter', $this->quidditch);
         $this->treiber = $this->quidditch->team1->treiber1;
         $this->gegnerJaeger = $this->quidditch->team2->jaeger3;
         $this->gegnerSucher = $this->quidditch->team2->sucher;
@@ -100,7 +100,7 @@ class TreiberCPTest extends \PHPUnit_Framework_TestCase
                 $klatscherwurf->param === $this->gegnerJaeger->name
                     || $klatscherwurf->param === $this->gegnerSucher->name);
         $this
-            ->assertEquals(new Befehl($this->treiber, 'Dice'),
+            ->assertEquals(new Befehl($this->treiber, 'Dice', null, $this->quidditch),
                 $this->getFromStack(1));
     }
 }

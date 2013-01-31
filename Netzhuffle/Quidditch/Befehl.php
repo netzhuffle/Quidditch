@@ -7,12 +7,14 @@ class Befehl
     public $wer;
     public $befehl;
     public $param;
+    private $quidditch;
     
-    public function __construct($wer, $befehl, $param = null)
+    public function __construct($wer, $befehl, $param, Quidditch $quidditch)
     {
         $this->wer = $this->getSpieler($wer);
         $this->befehl = $befehl;
         $this->param = $param;
+        $this->quidditch = $quidditch;
     }
     
     private function getSpieler($name)
@@ -20,13 +22,12 @@ class Befehl
         if ($name instanceof Spieler\Spieler) {
             return $name;
         } else {
-            return Quidditch::getInstance()->getSpieler($name);
+            return $this->quidditch->getSpieler($name);
         }
     }
     
     public function execute()
     {
-        $quidditch = Quidditch::getInstance();
         if ($this->wer->canDoCommand($this)) {
             if ($this->befehl != "Write" && $this->befehl != "WriteNotAllowed"
                 && $this->befehl != "Dice" && isset($this->wer->team)
@@ -39,7 +40,7 @@ class Befehl
                 call_user_func(array($this->wer, "act" . $this->befehl), $this);
             }
             $this->wer->doCommand($this);
-            foreach ($quidditch->getAllSpieler() as $spieler) {
+            foreach ($this->quidditch->getAllSpieler() as $spieler) {
                 if ($spieler->name != $this->wer->name) {
                     if (method_exists($spieler, "react" . $this->befehl)) {
                         call_user_func(array($spieler, "react" . $this->befehl), $this);

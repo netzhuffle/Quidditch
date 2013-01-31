@@ -25,9 +25,8 @@ class Treiber extends Spieler
     
     public function hasKlatscher()
     {
-        $quidditch = Quidditch::getInstance();
-        $hasKlatscher1 = $this == $quidditch->klatscher1->besitzer;
-        $hasKlatscher2 = $this == $quidditch->klatscher2->besitzer;
+        $hasKlatscher1 = $this == $this->quidditch->klatscher1->besitzer;
+        $hasKlatscher2 = $this == $this->quidditch->klatscher2->besitzer;
         
         return $hasKlatscher1 || $hasKlatscher2;
     }

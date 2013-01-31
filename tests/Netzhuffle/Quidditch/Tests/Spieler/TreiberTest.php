@@ -12,10 +12,10 @@ class TreiberTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = Quidditch::getInstance(true);
+        $this->quidditch = new Quidditch();
         $this->quidditch->klatscher1 = new Klatscher();
         $this->quidditch->klatscher2 = new Klatscher();
-        $this->treiber = new Treiber("CTreiber2", null);
+        $this->treiber = new Treiber("CTreiber2", null, $this->quidditch);
     }
     
     public function testHasKlatscherNone()

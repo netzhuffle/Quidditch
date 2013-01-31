@@ -14,10 +14,10 @@ class SpielerTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = Quidditch::getInstance(true);
-        $this->quidditch->team1 = $this->team = new Team("C");
+        $this->quidditch = new Quidditch();
+        $this->quidditch->team1 = $this->team = new Team("C", $this->quidditch);
         $this->quidditch->quaffel = new Quaffel();
-        $this->spieler = new Sucher("CSucher", $this->quidditch->team1);
+        $this->spieler = new Sucher("CSucher", $this->quidditch->team1, $this->quidditch);
     }
     
     protected function assertStackCount($count)
@@ -53,7 +53,7 @@ class SpielerTest extends \PHPUnit_Framework_TestCase
     public function testReactTordrittel()
     {
         $this->team->kapitaen = $this->spieler;
-        $this->quidditch->quaffel->besitzer = new Sucher("XSucher");
+        $this->quidditch->quaffel->besitzer = new Sucher("XSucher", null, $this->quidditch);
         $this->spieler->reactTordrittel(null);
         
         $this->assertStackCount(1);

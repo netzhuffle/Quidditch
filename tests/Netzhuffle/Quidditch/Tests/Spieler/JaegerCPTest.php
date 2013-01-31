@@ -11,7 +11,7 @@ class JaegerCPTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = Quidditch::getInstance(true);
+        $this->quidditch = new Quidditch();
     }
     
     protected function assertStackCount($count)
@@ -29,7 +29,7 @@ class JaegerCPTest extends \PHPUnit_Framework_TestCase
     public function testReactPositionjäger()
     {
         $this->quidditch->quaffel = new Quaffel();
-        $jaeger = new JaegerCP("CJäger2", null);
+        $jaeger = new JaegerCP("CJäger2", null, $this->quidditch);
         $jaeger->reactPositionjäger(null);
         
         $this->assertStackCount(1);

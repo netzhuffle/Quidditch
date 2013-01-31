@@ -3,7 +3,6 @@
 namespace Netzhuffle\Quidditch\Spieler;
 use Netzhuffle\Quidditch\Quidditch;
 use Netzhuffle\Quidditch\Befehl;
-use Netzhuffle\MainChat\Database;
 
 abstract class Spieler
 {
@@ -17,11 +16,13 @@ abstract class Spieler
     public $kampfwurf;
     public $die2;
     public $feld;
+    protected $quidditch;
     
-    public function __construct($name, $team = null)
+    public function __construct($name, $team = null, Quidditch $quidditch)
     {
         $this->name = $name;
         $this->team = $team;
+        $this->quidditch = $quidditch;
         $this->commands = array();
     }
     
@@ -65,8 +66,10 @@ abstract class Spieler
     public function actDice($befehl)
     {
         $this->dice($this->canDoCommand($befehl));
-        if (isset($this->lastCommand) && method_exists($this, "actDice" . $this->lastCommand->befehl)) {
-            call_user_func(array($this, "actDice" . $this->lastCommand->befehl), $befehl);
+        if (isset($this->lastCommand)
+            && method_exists($this, "actDice" . $this->lastCommand->befehl)) {
+            call_user_func(
+                array($this, "actDice" . $this->lastCommand->befehl), $befehl);
         }
     }
     
@@ -77,8 +80,12 @@ abstract class Spieler
     
     public function reactDice($befehl)
     {
-        if (isset($befehl->wer->lastCommand) && method_exists($this, "actDice" . $befehl->wer->lastCommand->befehl)) {
-            call_user_func(array($this, "actDice" . $befehl->wer->lastCommand->befehl), $befehl);
+        if (isset($befehl->wer->lastCommand)
+            && method_exists($this,
+                "actDice" . $befehl->wer->lastCommand->befehl)) {
+            call_user_func(
+                array($this, "actDice" . $befehl->wer->lastCommand->befehl),
+                $befehl);
         }
     }
     
@@ -92,13 +99,11 @@ abstract class Spieler
     public function reactTordrittel($befehl)
     {
         if ($this->isComputerCaptain()) {
-            $quidditch = Quidditch::getInstance();
-            $hasTeamQuaffel = ($quidditch->quaffel->besitzer
-                && $quidditch->quaffel->besitzer->team == $this->team);
+            $hasTeamQuaffel = ($this->quidditch->quaffel->besitzer
+                && $this->quidditch->quaffel->besitzer->team == $this->team);
             if (!$hasTeamQuaffel) {
-                $quidditch = Quidditch::getInstance();
                 $feld = mt_rand(0, 1) * 2; // = $feld entweder 0 oder 2
-                $this->delay(2, $quidditch->feldernamen[$feld]);
+                $this->delay(2, $this->quidditch->feldernamen[$feld]);
             }
         }
     }
@@ -106,9 +111,8 @@ abstract class Spieler
     public function reactQuaffeljäger($befehl)
     {
         if ($this->isComputerCaptain()) {
-            $quidditch = Quidditch::getInstance();
-            $hasTeamQuaffel = ($quidditch->quaffel->besitzer
-                && $quidditch->quaffel->besitzer->team == $this->team);
+            $hasTeamQuaffel = ($this->quidditch->quaffel->besitzer
+                && $this->quidditch->quaffel->besitzer->team == $this->team);
             if ($hasTeamQuaffel) {
                 $team = $this->team->name;
                 $nummer = mt_rand(1, 3);
@@ -125,40 +129,27 @@ abstract class Spieler
     
     protected function dice($isAllowed = true)
     {
-        global $t;
+        $this->erfolgswurf = mt_rand(1, 6);
+        $this->die2 = mt_rand(1, 6);
+        $this->kampfwurf = $this->erfolgswurf + $this->die2;
         
-        $die1 = mt_rand(1, 6);
-        $die2 = mt_rand(1, 6);
-        $summe = $die1 + $die2;
-        $message = $t['chat_msg34'];
-        $message = str_replace("%user%", $this->name, $message);
-        $message = str_replace("%wuerfel%", "2 großen 6-seitigen Würfeln",
-            $message);
-        $message .= " $die1 $die2. Summe=$summe.";
+        $message = ""; // TODO write message to chat
         if (!$isAllowed) {
             $message = "<s>" . $message . "</s>";
         }
-        $farbe = isset($this->team) ? $this->team->farbe : "";
-        $quidditch = Quidditch::getInstance();
-        hidden_msg($this->name, $this->getID(), $farbe, $quidditch->room,
-            $message);
-        $this->erfolgswurf = $die1;
-        $this->kampfwurf = $summe;
-        $this->die2 = $die2;
     }
     
     protected function write($message, $isAllowed = true)
     {
-        $quidditch = Quidditch::getInstance();
         if (!$isAllowed) {
             $message = "<s>$message</s>";
         }
-        // todo write to chat
+        // TODO write message to chat
     }
     
     protected function delay($delay, $befehl, $param = null)
     {
-        $befehl = new Befehl($this, $befehl, $param);
-        Quidditch::getInstance()->addStackItem($befehl, $delay);
+        $befehl = new Befehl($this, $befehl, $param, $this->quidditch);
+        $this->quidditch->addStackItem($befehl, $delay);
     }
 }

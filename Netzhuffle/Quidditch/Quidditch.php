@@ -1,12 +1,9 @@
 <?php
 
 namespace Netzhuffle\Quidditch;
-use Netzhuffle\Database;
 
 class Quidditch
 {
-    private static $instance;
-    public $room;
     public $runde;
     public $schiedsrichter;
     public $team1;
@@ -19,25 +16,9 @@ class Quidditch
     public $feldernamen;
     private $stack;
     
-    private function __construct($reset = false)
+    public function __construct()
     {
-        if ($reset) {
-            $this->reset();
-        }
-    }
-    
-    public static function getInstance($reset = false)
-    {
-        if (!self::$instance) {
-            self::$instance = new self(true);
-            $reset = false;
-        }
-        
-        if ($reset) {
-            self::$instance->reset();
-        }
-        
-        return self::$instance;
+        $this->reset();
     }
     
     private function reset()
@@ -115,7 +96,6 @@ class Quidditch
         $param = trim($command[1] . " " . $command[2] . " " . $command[3]);
         if ($befehl == "Quidditchstart") {
             $this->start($param);
-            echo "hoho";
         } else {
             if ($befehl == "/dice" && $param = "2w6") {
                 $befehl = "Dice";
@@ -161,20 +141,18 @@ class Quidditch
     
     private function start($modus)
     {
-        self::$instance = null;
-        $this->flush();
-        
-        if (!$modus)
+        if (!$modus) {
             $modus = "S-C";
+        }
         $modus = explode("-", $modus, 3);
         if (count($modus) == 1) {
             $modus[1] = "C";
         }
         
         $this->reset();
-        $this->schiedsrichter = new Spieler\Schiedsrichter("aSchiedsrichter");
-        $this->team1 = new Team($modus[0]);
-        $this->team2 = new Team($modus[1]);
+        $this->schiedsrichter = new Spieler\Schiedsrichter("aSchiedsrichter", $this);
+        $this->team1 = new Team($modus[0], $this);
+        $this->team2 = new Team($modus[1], $this);
         $this->team1->setGegner($this->team2);
         $this->team2->setGegner($this->team1);
         $this->klatscher1 = new Ball\Klatscher();
@@ -182,7 +160,6 @@ class Quidditch
         $this->quaffel = new Ball\Quaffel();
         $this->schnatz = new Ball\Schnatz();
         
-        $this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1), 1);
-        $this->flush();
+        $this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1, $this), 1);
     }
 }

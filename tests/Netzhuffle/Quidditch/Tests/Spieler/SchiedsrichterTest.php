@@ -17,10 +17,10 @@ class SchiedsrichterTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = Quidditch::getInstance(true);
-        $this->quidditch->team1 = new Team("X");
-        $this->quidditch->team2 = new Team("C");
-        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter');
+        $this->quidditch = new Quidditch();
+        $this->quidditch->team1 = new Team("X", $this->quidditch);
+        $this->quidditch->team2 = new Team("C", $this->quidditch);
+        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter', $this->quidditch);
         $this->schiedsrichter = $this->quidditch->schiedsrichter;
     }
     

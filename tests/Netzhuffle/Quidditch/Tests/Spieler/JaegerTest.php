@@ -9,9 +9,9 @@ class JaegerTest extends \PHPUnit_Framework_TestCase
 {
     public function testHasQuaffel()
     {
-        $quidditch = Quidditch::getInstance(true);
+        $quidditch = new Quidditch();
         $quidditch->quaffel = new Quaffel();
-        $jaeger = new Jaeger("CJäger2", null);
+        $jaeger = new Jaeger("CJäger2", null, $quidditch);
         $quidditch->quaffel->besitzer = $jaeger;
         $this->assertTrue($jaeger->hasQuaffel());
     }

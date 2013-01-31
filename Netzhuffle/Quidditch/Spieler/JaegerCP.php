@@ -10,7 +10,7 @@ class JaegerCP extends Jaeger
         if (!$this->hasQuaffel()) {
             $feld = mt_rand(0, 2);
             $delay = 1;//mt_rand(2, 15); // XXX
-            $this->delay($delay, Quidditch::getInstance()->feldernamen[$feld]);
+            $this->delay($delay, $this->quidditch->feldernamen[$feld]);
         }
     }
 }

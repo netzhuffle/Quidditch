@@ -9,6 +9,11 @@ class Schiedsrichter extends Spieler
     private $die2feld;
     private $waiting = array();
     
+    public function __construct($name, Quidditch $quidditch)
+    {
+        parent::__construct($name, null, $quidditch);
+    }
+    
     public function actDice($befehl)
     {
         parent::actDice($befehl);
@@ -21,8 +26,7 @@ class Schiedsrichter extends Spieler
     
     public function actRunde($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $quidditch->runde++;
+        $this->quidditch->runde++;
         $this->write("Chatende");
         if ($befehl->param == 1) {
             $this
@@ -36,23 +40,23 @@ class Schiedsrichter extends Spieler
                     "Runde $param, $qb->team->name hat den Quaffel.");
             $this->delay(2, "Positionjäger");
         }
-        $spieler = $quidditch->getAllSpieler();
+        $spieler = $this->quidditch->getAllSpieler();
         foreach ($spieler as $s) {
             $s->isOut = false;
         }
-        $quidditch->quaffel->besitzer = null;
-        $quidditch->klatscher1->besitzer = null;
-        $quidditch->klatscher2->besitzer = null;
-        $quidditch->klatscher1->used = false;
-        $quidditch->klatscher2->used = false;
-        $quidditch->klatscher1->opfer = null;
-        $quidditch->klatscher2->opfer = null;
-        $quidditch->klatscher1->hitTime = null;
-        $quidditch->klatscher2->hitTime = null;
-        $quidditch->klatscher1->hitBy = null;
-        $quidditch->klatscher2->hitBy = null;
-        $quidditch->klatscher1->blocked = false;
-        $quidditch->klatscher2->blocked = false;
+        $this->quidditch->quaffel->besitzer = null;
+        $this->quidditch->klatscher1->besitzer = null;
+        $this->quidditch->klatscher2->besitzer = null;
+        $this->quidditch->klatscher1->used = false;
+        $this->quidditch->klatscher2->used = false;
+        $this->quidditch->klatscher1->opfer = null;
+        $this->quidditch->klatscher2->opfer = null;
+        $this->quidditch->klatscher1->hitTime = null;
+        $this->quidditch->klatscher2->hitTime = null;
+        $this->quidditch->klatscher1->hitBy = null;
+        $this->quidditch->klatscher2->hitBy = null;
+        $this->quidditch->klatscher1->blocked = false;
+        $this->quidditch->klatscher2->blocked = false;
     }
     
     public function actQuaffeldice($befehl)
@@ -65,21 +69,19 @@ class Schiedsrichter extends Spieler
     
     public function actTordrittel($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $qb = $quidditch->quaffel->besitzer;
+        $qb = $this->quidditch->quaffel->besitzer;
         $kapitaen = $qb->team->gegner->kapitaen;
         $kapitaen
             ->setCommands(
-                array($quidditch->feldernamen[0] => null,
-                    $quidditch->feldernamen[2] => null));
+                array($this->quidditch->feldernamen[0] => null,
+                    $this->quidditch->feldernamen[2] => null));
         $this->waiting = array($kapitaen->name);
         $this->write("Wo soll euer Tor sein, $kapitaen->name?");
     }
     
     public function actQuaffeljäger($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $qb = $quidditch->quaffel->besitzer;
+        $qb = $this->quidditch->quaffel->besitzer;
         $qt = $qb->team->name;
         $kapitaen = $qb->team->kapitaen;
         $kapitaen
@@ -94,14 +96,13 @@ class Schiedsrichter extends Spieler
     
     public function actPositionjäger($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $team1 = $quidditch->team1;
-        $team2 = $quidditch->team2;
+        $team1 = $this->quidditch->team1;
+        $team2 = $this->quidditch->team2;
         $jaeger = array($team1->jaeger1, $team1->jaeger2, $team1->jaeger3,
             $team2->jaeger1, $team2->jaeger2, $team2->jaeger3);
-        $felder = array($quidditch->feldernamen[0] => null,
-            $quidditch->feldernamen[1] => null,
-            $quidditch->feldernamen[2] => null);
+        $felder = array($this->quidditch->feldernamen[0] => null,
+            $this->quidditch->feldernamen[1] => null,
+            $this->quidditch->feldernamen[2] => null);
         foreach ($jaeger as $spieler) {
             if ($qb->name != $spieler->name) {
                 $spieler->setCommands($felder);
@@ -113,12 +114,11 @@ class Schiedsrichter extends Spieler
     
     public function actPositionsucher($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $team1 = $quidditch->team1;
-        $team2 = $quidditch->team2;
+        $team1 = $this->quidditch->team1;
+        $team2 = $this->quidditch->team2;
         $this->waiting = array($team1->sucher->name, $team2->sucher->name);
-        $felder = array($quidditch->feldernamen[0] => null,
-            $quidditch->feldernamen[2] => null);
+        $felder = array($this->quidditch->feldernamen[0] => null,
+            $this->quidditch->feldernamen[2] => null);
         $team1->sucher->setCommands($felder);
         $team2->sucher->setCommands($felder);
         $this->write("Position Sucher");
@@ -126,14 +126,13 @@ class Schiedsrichter extends Spieler
     
     public function actPositiontreiber($befehl)
     {
-        $quidditch = Quidditch::getInstance();
         $team1 = $quidditch->team1;
         $team2 = $quidditch->team2;
         $this->waiting = array($team1->treiber1->name, $team1->treiber2->name,
             $team2->treiber1->name, $team2->treiber2->name);
-        $felder = array($quidditch->feldernamen[0] => null,
-            $quidditch->feldernamen[1] => null,
-            $quidditch->feldernamen[2] => null);
+        $felder = array($this->quidditch->feldernamen[0] => null,
+            $this->quidditch->feldernamen[1] => null,
+            $this->quidditch->feldernamen[2] => null);
         $team1->treiber1->setCommands($felder);
         $team1->treiber2->setCommands($felder);
         $team2->treiber1->setCommands($felder);
@@ -150,13 +149,12 @@ class Schiedsrichter extends Spieler
     
     public function actPositionklatscherdice($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $quidditch->klatscher1->feld = $this->die1feld;
-        $quidditch->klatscher2->feld = $this->die2feld;
+        $this->quidditch->klatscher1->feld = $this->die1feld;
+        $this->quidditch->klatscher2->feld = $this->die2feld;
         $this
             ->write(
-                $quidditch->feldernamen[$this->die1feld] . " und "
-                    . $quidditch->feldernamen[$this->die2feld]);
+                $this->quidditch->feldernamen[$this->die1feld] . " und "
+                    . $this->quidditch->feldernamen[$this->die2feld]);
         $end = $this->setTreiberCommands();
         if ($end) {
             $this
@@ -180,13 +178,12 @@ class Schiedsrichter extends Spieler
     
     public function actWaitingempty($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        $qb = $quidditch->quaffel->besitzer;
+        $qb = $this->quidditch->quaffel->besitzer;
         if ($this->lastCommand->befehl == "Quaffeldice") {
             $kampfwurfGewinner = $this->getKampfwurfGewinner($k1, $k2);
             if ($kampfwurfGewinner) {
                 $team = $kampfwurfGewinner->team;
-                $quidditch->quaffel->besitzer = $team->jaeger1;
+                $this->quidditch->quaffel->besitzer = $team->jaeger1;
                 $this->write("$team->name hat den Quaffel.");
                 $this->delay(1, "Tordrittel");
             } else {
@@ -197,10 +194,10 @@ class Schiedsrichter extends Spieler
             $qt = $qb->team; // QuaffelTeam
             $qg = $qt->gegner; // QuaffelGegner
             $tor = $qg->kapitaen->feld; // welches Feld für qg; als boolean gesehen: feld2 für qg, feld0 für qt
-            $quidditch->feldernamen[0] = $tor ? $qt->name : $qg->name;
-            $quidditch->feldernamen[2] = $tor ? $qg->name : $qt->name;
-            $feld0 = $quidditch->feldernamen[0];
-            $feld2 = $quidditch->feldernamen[2];
+            $this->quidditch->feldernamen[0] = $tor ? $qt->name : $qg->name;
+            $this->quidditch->feldernamen[2] = $tor ? $qg->name : $qt->name;
+            $feld0 = $this->quidditch->feldernamen[0];
+            $feld2 = $this->quidditch->feldernamen[2];
             $this->write("T = $feld0, H = $feld2");
             $this->delay(1, "Quaffeljäger");
             
@@ -221,7 +218,6 @@ class Schiedsrichter extends Spieler
     public function react($befehl) // TODO refactor each waiting command to react…()
     {
         parent::react($befehl);
-        $quidditch = Quidditch::getInstance();
         if ($befehl->befehl != "Write"
             && ($pos = array_search($befehl->wer->name, $this->waiting))
                 !== false) {
@@ -230,7 +226,7 @@ class Schiedsrichter extends Spieler
                 $this->delay(2, "Waitingempty");
             }
             if ($this->lastCommand->befehl == "Quaffeljäger") {
-                $quidditch->quaffel->besitzer = $quidditch
+                $this->quidditch->quaffel->besitzer = $quidditch
                     ->getSpieler($befehl->befehl);
             }
         }
@@ -238,16 +234,15 @@ class Schiedsrichter extends Spieler
     
     public function reactKlatscherwurf($befehl)
     {
-        $quidditch = Quidditch::getInstance();
-        if ($befehl->wer->feld == $quidditch->klatscher1->feld
-            && !$quidditch->klatscher1->used) {
-            $klatscher = $quidditch->klatscher1;
-        } elseif ($befehl->wer->feld == $quidditch->klatscher2->feld) {
-            $klatscher = $quidditch->klatscher2;
+        if ($befehl->wer->feld == $this->quidditch->klatscher1->feld
+            && !$this->quidditch->klatscher1->used) {
+            $klatscher = $this->quidditch->klatscher1;
+        } elseif ($befehl->wer->feld == $this->quidditch->klatscher2->feld) {
+            $klatscher = $this->quidditch->klatscher2;
         }
         $klatscher->used = true;
         $klatscher->hitBy = $befehl->wer;
-        $klatscher->opfer = $quidditch->getSpieler($befehl->param);
+        $klatscher->opfer = $this->quidditch->getSpieler($befehl->param);
         $befehl->wer->lastHitKlatscher = $klatscher;
         $this->setTreiberCommands($befehl);
     }
@@ -282,10 +277,9 @@ class Schiedsrichter extends Spieler
     
     public function reactDiceKlatscherabfang($befehl)
     {
-        $quidditch = Quidditch::getInstance();
         if ($befehl->wer->erfolgswurf >= 4) {
-            if (!$quidditch->klatscher2->used) {
-                $quidditch->klatscher2->besitzer = $befehl->wer;
+            if (!$this->quidditch->klatscher2->used) {
+                $this->quidditch->klatscher2->besitzer = $befehl->wer;
             }
         }
         $this->setTreiberCommands();
@@ -315,11 +309,10 @@ class Schiedsrichter extends Spieler
      */
     private function setTreiberCommands($runningCommand = null)
     {
-        $quidditch = Quidditch::getInstance();
         $end = true;
         
         for ($i = 0; $i <= 2; $i++) {
-            $drittelSpieler = $quidditch->getSpielerInDrittel($i);
+            $drittelSpieler = $this->quidditch->getSpielerInDrittel($i);
             foreach ($drittelSpieler as $spieler) {
                 if ($spieler instanceof Treiber) {
                     $spielerBefehl = $spieler->lastCommand;
@@ -335,13 +328,13 @@ class Schiedsrichter extends Spieler
                     } elseif ($spielerBefehl->befehl == "Dice"
                         && $spieler->hasDoneKlatscherwurf()
                         && $spieler->feld == $quidditch->klatscher2->feld
-                        && !$quidditch->klatscher2->used) {
+                        && !$this->quidditch->klatscher2->used) {
                         $spieler->setCommands(array("Klatscherabfang" => null));
                         $end = false;
-                    } elseif ($spieler->feld == $quidditch->klatscher1->feld
-                        && !$quidditch->klatscher1->used
-                        || $spieler->feld == $quidditch->klatscher2->feld
-                            && !$quidditch->klatscher2->used) {
+                    } elseif ($spieler->feld == $this->quidditch->klatscher1->feld
+                        && !$this->quidditch->klatscher1->used
+                        || $spieler->feld == $this->quidditch->klatscher2->feld
+                            && !$this->quidditch->klatscher2->used) {
                         $opfer = array();
                         foreach ($drittelSpieler as $anderer) {
                             if (!($anderer instanceof Treiber)) {
