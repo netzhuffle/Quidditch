@@ -4,3 +4,4 @@
 /conf/config.php*
 /seitenkoepfe/*
 /logs/*
+.buildpath
