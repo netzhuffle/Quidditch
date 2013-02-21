@@ -27,7 +27,8 @@ class TreiberCPTest extends \PHPUnit_Framework_TestCase
         $this->klatscher2 = $this->quidditch->klatscher2 = new Klatscher();
         $this->quidditch->team1 = new Team("X", $this->quidditch);
         $this->quidditch->team2 = new Team("C", $this->quidditch);
-        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter', $this->quidditch);
+        $this->quidditch->schiedsrichter = new Schiedsrichter(
+            'aSchiedsrichter', $this->quidditch);
         $this->treiber = $this->quidditch->team1->treiber1;
         $this->gegnerJaeger = $this->quidditch->team2->jaeger3;
         $this->gegnerSucher = $this->quidditch->team2->sucher;
@@ -53,9 +54,10 @@ class TreiberCPTest extends \PHPUnit_Framework_TestCase
         $befehl = $this->getFromStack(0);
         $this->assertEquals($this->treiber, $befehl->wer);
         $this
-            ->assertTrue(
-                $befehl->befehl === 'T' || $befehl->befehl === 'M'
-                    || $befehl->befehl === 'H');
+            ->assertThat($befehl->befehl,
+                $this
+                    ->logicalOr($this->equalTo('T'), $this->equalTo('M'),
+                        $this->equalTo('H')));
         $this->assertEquals(null, $befehl->param);
     }
     
@@ -97,11 +99,13 @@ class TreiberCPTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->treiber, $klatscherwurf->wer);
         $this->assertEquals('Klatscherwurf', $klatscherwurf->befehl);
         $this
-            ->assertTrue(
-                $klatscherwurf->param === $this->gegnerJaeger->name
-                    || $klatscherwurf->param === $this->gegnerSucher->name);
+            ->assertThat($klatscherwurf->param,
+                $this
+                    ->logicalOr($this->equalTo($this->gegnerJaeger->name),
+                        $this->equalTo($this->gegnerSucher->name)));
         $this
-            ->assertEquals(new Befehl($this->treiber, 'Dice', null, $this->quidditch),
+            ->assertEquals(
+                new Befehl($this->treiber, 'Dice', null, $this->quidditch),
                 $this->getFromStack(1));
     }
 }

@@ -10,7 +10,7 @@ class ArrayChat implements ChatInterface
      * @var array
      */
     private $messages = [];
-    
+
     /**
      * (non-PHPdoc)
      * @see \Netzhuffle\Quidditch\Chat\ChatInterface::write()
@@ -20,7 +20,7 @@ class ArrayChat implements ChatInterface
         $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler,
             'message' => $message, 'isAllowed' => $isAllowed];
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see \Netzhuffle\Quidditch\Chat\ChatInterface::rollDice()
@@ -30,7 +30,7 @@ class ArrayChat implements ChatInterface
         $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler,
             'die1' => $die1, 'die2' => $die2, 'isAllowed' => $isAllowed];
     }
-    
+
     /**
      * Returns the written messages.
      * Newer messages have higher keys. Each entry is an array with the keys
@@ -44,5 +44,5 @@ class ArrayChat implements ChatInterface
     {
         return $this->messages;
     }
-    
+
 }

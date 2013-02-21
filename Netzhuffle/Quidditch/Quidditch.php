@@ -17,13 +17,13 @@ class Quidditch
     public $multipleJaegerFly;
     public $feldernamen;
     private $stack;
-    
+
     public function __construct(ChatInterface $chat)
     {
         $this->chat = $chat;
         $this->reset();
     }
-    
+
     private function reset()
     {
         $this->runde = 0;
@@ -38,7 +38,7 @@ class Quidditch
         $this->quaffel = null;
         $this->schnatz = null;
     }
-    
+
     public function getAllSpieler()
     {
         $array = array();
@@ -61,10 +61,10 @@ class Quidditch
             $array[] = $this->team2->treiber2;
             $array[] = $this->team2->sucher;
         }
-        
+
         return $array;
     }
-    
+
     public function getSpieler($name)
     {
         if ($this->schiedsrichter && trim($name) == $this->schiedsrichter->name) {
@@ -75,11 +75,11 @@ class Quidditch
                     return $spieler;
                 }
             }
-            
+
             return null;
         }
     }
-    
+
     public function getSpielerInDrittel($drittel)
     {
         $spieler = $this->getAllSpieler();
@@ -89,10 +89,10 @@ class Quidditch
                 $drittelSpieler[] = $s;
             }
         }
-        
+
         return $drittelSpieler;
     }
-    
+
     public function command($command, $u_nick)
     {
         $befehl = trim($command[0]);
@@ -108,7 +108,7 @@ class Quidditch
             $befehl->execute();
         }
     }
-    
+
     public function doStack()
     {
         foreach ($this->stack as $time => $befehle) {
@@ -120,7 +120,7 @@ class Quidditch
             }
         }
     }
-    
+
     public function addStackItem($befehl, $delay)
     {
         mt_srand();
@@ -130,7 +130,7 @@ class Quidditch
         }
         $this->stack[$time][] = $befehl;
     }
-    
+
     public function getNextStackItems()
     {
         $array = array();
@@ -138,10 +138,10 @@ class Quidditch
         foreach ($timeArrays as $befehle) {
             $array = array_merge($array, $befehle);
         }
-        
+
         return $array;
     }
-    
+
     private function start($modus)
     {
         if (!$modus) {
@@ -151,7 +151,7 @@ class Quidditch
         if (count($modus) == 1) {
             $modus[1] = "C";
         }
-        
+
         $this->reset();
         $this->schiedsrichter = new Spieler\Schiedsrichter("aSchiedsrichter", null, $this);
         $this->team1 = new Team($modus[0], $this);
@@ -162,7 +162,7 @@ class Quidditch
         $this->klatscher2 = new Ball\Klatscher();
         $this->quaffel = new Ball\Quaffel();
         $this->schnatz = new Ball\Schnatz();
-        
+
         $this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1, $this), 1);
     }
 }

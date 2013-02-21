@@ -13,8 +13,7 @@ class ArrayChatTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->chat = new ArrayChat();
-        $quidditch = $this->getMock('Quidditch');
-        $this->spieler = new Hueter("SHüter", null, $quidditch);
+        $this->spieler = new Hueter("SHüter", null, new Quidditch($this->chat));
     }
     
     public function testWrite()

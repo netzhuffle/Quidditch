@@ -18,10 +18,10 @@ class Team
     public $isComputer = false;
     public $farbe = "FFFFFF";
     private $quidditch;
-    
+
     /**
      * Creates the team
-     * @param string $name The teams name, one letter. C and X are NPCs, other letters are player teams.
+     * @param string    $name      The teams name, one letter. C and X are NPCs, other letters are player teams.
      * @param Quidditch $quidditch An Quidditch instance
      */
     public function __construct($name, Quidditch $quidditch)
@@ -48,7 +48,7 @@ class Team
         }
         $this->kapitaen = $this->sucher;
     }
-    
+
     public function setGegner($gegner)
     {
         $this->gegner = $gegner;

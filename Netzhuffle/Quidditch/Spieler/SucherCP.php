@@ -9,7 +9,7 @@ class SucherCP extends Sucher
     {
         parent::act($befehl);
     }
-    
+
     public function react($befehl)
     {
         parent::react($befehl);

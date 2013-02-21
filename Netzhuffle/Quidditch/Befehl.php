@@ -8,7 +8,7 @@ class Befehl
     public $befehl;
     public $param;
     private $quidditch;
-    
+
     public function __construct($wer, $befehl, $param, Quidditch $quidditch)
     {
         $this->wer = $this->getSpieler($wer);
@@ -16,7 +16,7 @@ class Befehl
         $this->param = $param;
         $this->quidditch = $quidditch;
     }
-    
+
     private function getSpieler($name)
     {
         if ($name instanceof Spieler\Spieler) {
@@ -25,7 +25,7 @@ class Befehl
             return $this->quidditch->getSpieler($name);
         }
     }
-    
+
     public function execute()
     {
         if ($this->wer->canDoCommand($this)) {

@@ -8,22 +8,22 @@ class Schiedsrichter extends Spieler
     private $die1feld;
     private $die2feld;
     private $waiting = array();
-    
+
     public function __construct($name, Quidditch $quidditch)
     {
         parent::__construct($name, null, $quidditch);
     }
-    
+
     public function actDice($befehl)
     {
         parent::actDice($befehl);
         $die1 = $this->erfolgswurf;
         $die2 = $this->die2;
-        
+
         $this->die1feld = intval(floor(($die1 - 1) / 2));
         $this->die2feld = intval(floor(($die2 - 1) / 2));
     }
-    
+
     public function actRunde($befehl)
     {
         $this->quidditch->runde++;
@@ -58,7 +58,7 @@ class Schiedsrichter extends Spieler
         $this->quidditch->klatscher1->blocked = false;
         $this->quidditch->klatscher2->blocked = false;
     }
-    
+
     public function actQuaffeldice($befehl)
     {
         $this->write("Kapitäne würfeln bitte um den Quaffel");
@@ -66,7 +66,7 @@ class Schiedsrichter extends Spieler
         $k2->setCommands(array("Dice" => null));
         $this->waiting = array($k1->name, $k2->name);
     }
-    
+
     public function actTordrittel($befehl)
     {
         $qb = $this->quidditch->quaffel->besitzer;
@@ -78,7 +78,7 @@ class Schiedsrichter extends Spieler
         $this->waiting = array($kapitaen->name);
         $this->write("Wo soll euer Tor sein, $kapitaen->name?");
     }
-    
+
     public function actQuaffeljäger($befehl)
     {
         $qb = $this->quidditch->quaffel->besitzer;
@@ -93,7 +93,7 @@ class Schiedsrichter extends Spieler
             ->write(
                 "$kapitaen->name, welcher Jäger in deinem Team soll den Quaffel bekommen (Name)?");
     }
-    
+
     public function actPositionjäger($befehl)
     {
         $team1 = $this->quidditch->team1;
@@ -111,7 +111,7 @@ class Schiedsrichter extends Spieler
         }
         $this->write("Position Jäger");
     }
-    
+
     public function actPositionsucher($befehl)
     {
         $team1 = $this->quidditch->team1;
@@ -123,7 +123,7 @@ class Schiedsrichter extends Spieler
         $team2->sucher->setCommands($felder);
         $this->write("Position Sucher");
     }
-    
+
     public function actPositiontreiber($befehl)
     {
         $team1 = $quidditch->team1;
@@ -139,14 +139,14 @@ class Schiedsrichter extends Spieler
         $team2->treiber2->setCommands($felder);
         $this->write("Position Treiber");
     }
-    
+
     public function actPositionklatscher($befehl)
     {
         $this->write("Klatscher sind in");
         $this->delay(1, "Dice");
         $this->delay(2, "Positionklatscherdice");
     }
-    
+
     public function actPositionklatscherdice($befehl)
     {
         $this->quidditch->klatscher1->feld = $this->die1feld;
@@ -165,17 +165,17 @@ class Schiedsrichter extends Spieler
             $this->delay(3, "Klatscherfreigeb");
         }
     }
-    
+
     public function actTreiberende($befehl)
     {
         $this->write("Treiberende");
     }
-    
+
     public function actPositionquaffel($befehl)
     {
         $this->write("The End.");
     }
-    
+
     public function actWaitingempty($befehl)
     {
         $qb = $this->quidditch->quaffel->besitzer;
@@ -189,7 +189,7 @@ class Schiedsrichter extends Spieler
             } else {
                 $this->delay(1, "Quaffeldice");
             }
-            
+
         } elseif ($this->lastCommand->befehl == "Tordrittel") {
             $qt = $qb->team; // QuaffelTeam
             $qg = $qt->gegner; // QuaffelGegner
@@ -200,21 +200,21 @@ class Schiedsrichter extends Spieler
             $feld2 = $this->quidditch->feldernamen[2];
             $this->write("T = $feld0, H = $feld2");
             $this->delay(1, "Quaffeljäger");
-            
+
         } elseif ($this->lastCommand->befehl == "Quaffeljäger") {
             $this->delay(1, "Positionjäger");
-            
+
         } elseif ($this->lastCommand->befehl == "Positionjäger") {
             $this->delay(1, "Positionsucher");
-            
+
         } elseif ($this->lastCommand->befehl == "Positionsucher") {
             $this->delay(1, "Positiontreiber");
-            
+
         } elseif ($this->lastCommand->befehl == "Positiontreiber") {
             $this->delay(1, "Positionklatscher");
         }
     }
-    
+
     public function react($befehl) // TODO refactor each waiting command to react…()
     {
         parent::react($befehl);
@@ -231,7 +231,7 @@ class Schiedsrichter extends Spieler
             }
         }
     }
-    
+
     public function reactKlatscherwurf($befehl)
     {
         if ($befehl->wer->feld == $this->quidditch->klatscher1->feld
@@ -246,17 +246,17 @@ class Schiedsrichter extends Spieler
         $befehl->wer->lastHitKlatscher = $klatscher;
         $this->setTreiberCommands($befehl);
     }
-    
+
     public function reactKlatscherabwurf($befehl)
     {
         $this->reactKlatscherwurf($befehl);
     }
-    
+
     public function reactKlatscherabfang($befehl)
     {
         $this->setTreiberCommands($befehl);
     }
-    
+
     public function reactDiceKlatscherwurf($befehl)
     {
         $treiber = $befehl->wer;
@@ -274,7 +274,7 @@ class Schiedsrichter extends Spieler
     {
         $this->reactDiceKlatscherabwurf($befehl);
     }
-    
+
     public function reactDiceKlatscherabfang($befehl)
     {
         if ($befehl->wer->erfolgswurf >= 4) {
@@ -284,7 +284,7 @@ class Schiedsrichter extends Spieler
         }
         $this->setTreiberCommands();
     }
-    
+
     private function getKampfwurfGewinner($spieler1, $spieler2)
     {
         if ($spieler1->kampfwurf > $spieler2->kampfwurf) {
@@ -303,14 +303,14 @@ class Schiedsrichter extends Spieler
             return null;
         }
     }
-    
+
     /**
      * @return boolean Is any Treiber able to do something?
      */
     private function setTreiberCommands($runningCommand = null)
     {
         $end = true;
-        
+
         for ($i = 0; $i <= 2; $i++) {
             $drittelSpieler = $this->quidditch->getSpielerInDrittel($i);
             foreach ($drittelSpieler as $spieler) {
@@ -359,8 +359,8 @@ class Schiedsrichter extends Spieler
                 }
             }
         }
-        
+
         return $end;
     }
-    
+
 }

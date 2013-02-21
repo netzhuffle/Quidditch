@@ -17,15 +17,15 @@ abstract class Spieler
     public $die2;
     public $feld;
     protected $quidditch;
-    
-    public function __construct($name, $team, $quidditch)
+
+    public function __construct($name, $team, Quidditch $quidditch)
     {
         $this->name = $name;
         $this->team = $team;
         $this->quidditch = $quidditch;
         $this->commands = array();
     }
-    
+
     public function canDoCommand($befehl)
     {
         if ($befehl->befehl == "Write" || $befehl->befehl == "WriteNotAllowed") {
@@ -34,10 +34,10 @@ abstract class Spieler
         if (!array_key_exists($befehl->befehl, $this->commands)) {
             return false;
         }
-        
+
         return in_array($befehl->param, $this->commands[$befehl->befehl]);
     }
-    
+
     public function setCommands($commands)
     {
         foreach ($commands as $command => $params) {
@@ -47,22 +47,22 @@ abstract class Spieler
         }
         $this->commands = $commands;
     }
-    
+
     public function deleteCommands()
     {
         $this->commands = array();
     }
-    
+
     public function actWrite($befehl)
     {
         $this->write($befehl->param);
     }
-    
+
     public function actWriteNotAllowed($befehl)
     {
         $this->write($befehl->param, false);
     }
-    
+
     public function actDice($befehl)
     {
         $this->dice($this->canDoCommand($befehl));
@@ -72,12 +72,12 @@ abstract class Spieler
                 array($this, "actDice" . $this->lastCommand->befehl), $befehl);
         }
     }
-    
+
     protected function actDrittel($befehl)
     {
         $this->feld = array_search($befehl->befehl, $quidditch->feldernamen);
     }
-    
+
     public function reactDice($befehl)
     {
         if (isset($befehl->wer->lastCommand)
@@ -88,14 +88,14 @@ abstract class Spieler
                 $befehl);
         }
     }
-    
+
     public function reactQuaffeldice($befehl)
     {
         if ($this->isComputerCaptain()) {
             $this->delay(2, "Dice");
         }
     }
-    
+
     public function reactTordrittel($befehl)
     {
         if ($this->isComputerCaptain()) {
@@ -107,7 +107,7 @@ abstract class Spieler
             }
         }
     }
-    
+
     public function reactQuaffeljäger($befehl)
     {
         if ($this->isComputerCaptain()) {
@@ -120,27 +120,27 @@ abstract class Spieler
             }
         }
     }
-    
+
     public function isComputerCaptain()
     {
         return $this->team && $this->team->isComputer
             && $this == $this->team->kapitaen;
     }
-    
+
     protected function dice($isAllowed = true)
     {
         $this->erfolgswurf = mt_rand(1, 6);
         $this->die2 = mt_rand(1, 6);
         $this->kampfwurf = $this->erfolgswurf + $this->die2;
-        
+
         $this->quidditch->chat->rollDice($this, $this->erfolgswurf, $this->die2, $isAllowed);
     }
-    
+
     protected function write($message, $isAllowed = true)
     {
         $this->quidditch->chat->rollDice($this, $message, $isAllowed);
     }
-    
+
     protected function delay($delay, $befehl, $param = null)
     {
         $befehl = new Befehl($this, $befehl, $param, $this->quidditch);
