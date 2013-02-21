@@ -21,8 +21,8 @@ class Team
     
     /**
      * Creates the team
-     * @param Quidditch $quidditch An Quidditch instance
      * @param string $name The teams name, one letter. C and X are NPCs, other letters are player teams.
+     * @param Quidditch $quidditch An Quidditch instance
      */
     public function __construct($name, Quidditch $quidditch)
     {

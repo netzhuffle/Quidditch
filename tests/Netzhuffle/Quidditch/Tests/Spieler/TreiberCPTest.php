@@ -9,6 +9,7 @@ use Netzhuffle\Quidditch\Ball\Klatscher;
 use Netzhuffle\Quidditch\Spieler\Jaeger;
 use Netzhuffle\Quidditch\Spieler\Sucher;
 use Netzhuffle\Quidditch\Befehl;
+use Netzhuffle\Quidditch\Chat\ArrayChat;
 
 class TreiberCPTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class TreiberCPTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = new Quidditch();
+        $this->quidditch = new Quidditch(new ArrayChat());
         $this->klatscher1 = $this->quidditch->klatscher1 = new Klatscher();
         $this->klatscher2 = $this->quidditch->klatscher2 = new Klatscher();
         $this->quidditch->team1 = new Team("X", $this->quidditch);

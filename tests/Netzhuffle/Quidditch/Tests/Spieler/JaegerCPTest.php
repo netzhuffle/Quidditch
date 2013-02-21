@@ -4,6 +4,7 @@ namespace Netzhuffle\Tests\Quidditch\Spieler;
 use Netzhuffle\Quidditch\Quidditch;
 use Netzhuffle\Quidditch\Spieler\JaegerCP;
 use Netzhuffle\Quidditch\Ball\Quaffel;
+use Netzhuffle\Quidditch\Chat\ArrayChat;
 
 class JaegerCPTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,7 +12,7 @@ class JaegerCPTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = new Quidditch();
+        $this->quidditch = new Quidditch(new ArrayChat());
     }
     
     protected function assertStackCount($count)

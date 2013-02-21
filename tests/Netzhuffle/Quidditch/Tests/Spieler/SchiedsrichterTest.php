@@ -9,6 +9,7 @@ use Netzhuffle\Quidditch\Ball\Klatscher;
 use Netzhuffle\Quidditch\Spieler\Jaeger;
 use Netzhuffle\Quidditch\Spieler\Sucher;
 use Netzhuffle\Quidditch\Befehl;
+use Netzhuffle\Quidditch\Chat\ArrayChat;
 
 class SchiedsrichterTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +18,7 @@ class SchiedsrichterTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = new Quidditch();
+        $this->quidditch = new Quidditch(new ArrayChat());
         $this->quidditch->team1 = new Team("X", $this->quidditch);
         $this->quidditch->team2 = new Team("C", $this->quidditch);
         $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter', $this->quidditch);

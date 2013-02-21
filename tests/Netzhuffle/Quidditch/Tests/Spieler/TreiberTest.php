@@ -4,6 +4,7 @@ namespace Netzhuffle\Tests\Quidditch\Spieler;
 use Netzhuffle\Quidditch\Quidditch;
 use Netzhuffle\Quidditch\Spieler\Treiber;
 use Netzhuffle\Quidditch\Ball\Klatscher;
+use Netzhuffle\Quidditch\Chat\ArrayChat;
 
 class TreiberTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +13,7 @@ class TreiberTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = new Quidditch();
+        $this->quidditch = new Quidditch(new ArrayChat());
         $this->quidditch->klatscher1 = new Klatscher();
         $this->quidditch->klatscher2 = new Klatscher();
         $this->treiber = new Treiber("CTreiber2", null, $this->quidditch);

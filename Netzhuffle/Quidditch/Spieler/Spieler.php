@@ -18,7 +18,7 @@ abstract class Spieler
     public $feld;
     protected $quidditch;
     
-    public function __construct($name, $team = null, Quidditch $quidditch)
+    public function __construct($name, $team, $quidditch)
     {
         $this->name = $name;
         $this->team = $team;
@@ -133,18 +133,12 @@ abstract class Spieler
         $this->die2 = mt_rand(1, 6);
         $this->kampfwurf = $this->erfolgswurf + $this->die2;
         
-        $message = ""; // TODO write message to chat
-        if (!$isAllowed) {
-            $message = "<s>" . $message . "</s>";
-        }
+        $this->quidditch->chat->rollDice($this, $this->erfolgswurf, $this->die2, $isAllowed);
     }
     
     protected function write($message, $isAllowed = true)
     {
-        if (!$isAllowed) {
-            $message = "<s>$message</s>";
-        }
-        // TODO write message to chat
+        $this->quidditch->chat->rollDice($this, $message, $isAllowed);
     }
     
     protected function delay($delay, $befehl, $param = null)

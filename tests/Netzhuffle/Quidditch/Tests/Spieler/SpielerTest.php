@@ -5,6 +5,7 @@ use Netzhuffle\Quidditch\Quidditch;
 use Netzhuffle\Quidditch\Team;
 use Netzhuffle\Quidditch\Spieler\Sucher;
 use Netzhuffle\Quidditch\Ball\Quaffel;
+use Netzhuffle\Quidditch\Chat\ArrayChat;
 
 class SpielerTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +15,7 @@ class SpielerTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->quidditch = new Quidditch();
+        $this->quidditch = new Quidditch(new ArrayChat());
         $this->quidditch->team1 = $this->team = new Team("C", $this->quidditch);
         $this->quidditch->quaffel = new Quaffel();
         $this->spieler = new Sucher("CSucher", $this->quidditch->team1, $this->quidditch);

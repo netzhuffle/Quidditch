@@ -1,9 +1,11 @@
 <?php
 
 namespace Netzhuffle\Quidditch;
+use Netzhuffle\Quidditch\Chat\ChatInterface;
 
 class Quidditch
 {
+    public $chat;
     public $runde;
     public $schiedsrichter;
     public $team1;
@@ -16,8 +18,9 @@ class Quidditch
     public $feldernamen;
     private $stack;
     
-    public function __construct()
+    public function __construct(ChatInterface $chat)
     {
+        $this->chat = $chat;
         $this->reset();
     }
     
@@ -150,7 +153,7 @@ class Quidditch
         }
         
         $this->reset();
-        $this->schiedsrichter = new Spieler\Schiedsrichter("aSchiedsrichter", $this);
+        $this->schiedsrichter = new Spieler\Schiedsrichter("aSchiedsrichter", null, $this);
         $this->team1 = new Team($modus[0], $this);
         $this->team2 = new Team($modus[1], $this);
         $this->team1->setGegner($this->team2);
