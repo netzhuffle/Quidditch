@@ -1,7 +1,7 @@
 .DS_Store
 .project
 .settings
-/conf/config.php*
-/seitenkoepfe/*
-/logs/*
 .buildpath
+
+/vendor
+composer.phar
