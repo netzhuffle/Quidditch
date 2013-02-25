@@ -29,11 +29,8 @@ class Befehl
     public function execute()
     {
         if ($this->wer->canDoCommand($this)) {
-            if ($this->befehl != "Write" && $this->befehl != "WriteNotAllowed"
-                && $this->befehl != "Dice" && isset($this->wer->team)
-                && $this->wer->team->isComputer) {
-                $write = new self($this->wer->name, "Write",
-                    $this->befehl . " " . $this->param);
+            if ($this->befehl != "Write" && $this->befehl != "WriteNotAllowed" && $this->befehl != "Dice" && isset($this->wer->team) && $this->wer->team->isComputer) {
+                $write = new self($this->wer->name, "Write", $this->befehl . " " . $this->param);
                 $write->execute();
             }
             if (method_exists($this->wer, "act" . $this->befehl)) {
@@ -53,10 +50,8 @@ class Befehl
         } else { // keine Berechtigung für Befehl
             if ($this->befehl == "Dice") {
                 $this->wer->actDice($this); // trotzdem würfeln
-            } elseif ($this->befehl != "Write" && isset($this->wer->team)
-                && $this->wer->team->isComputer) {
-                $write = new self($this->wer->name, "WriteNotAllowed",
-                    $this->befehl . " " . $this->param);
+            } elseif ($this->befehl != "Write" && isset($this->wer->team) && $this->wer->team->isComputer) {
+                $write = new self($this->wer->name, "WriteNotAllowed", $this->befehl . " " . $this->param);
                 $write->execute();
             }
         }

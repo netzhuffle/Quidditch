@@ -18,8 +18,7 @@ class SpielerTest extends \PHPUnit_Framework_TestCase
         $this->quidditch = new Quidditch(new ArrayChat());
         $this->quidditch->team1 = $this->team = new Team("C", $this->quidditch);
         $this->quidditch->quaffel = new Quaffel();
-        $this->spieler = new Sucher("CSucher", $this->quidditch->team1,
-            $this->quidditch);
+        $this->spieler = new Sucher("CSucher", $this->quidditch->team1, $this->quidditch);
     }
     
     protected function assertStackCount($count)
@@ -55,18 +54,13 @@ class SpielerTest extends \PHPUnit_Framework_TestCase
     public function testReactTordrittel()
     {
         $this->team->kapitaen = $this->spieler;
-        $this->quidditch->quaffel->besitzer = new Sucher("XSucher", null,
-            $this->quidditch);
+        $this->quidditch->quaffel->besitzer = new Sucher("XSucher", null, $this->quidditch);
         $this->spieler->reactTordrittel(null);
         
         $this->assertStackCount(1);
         $befehl = $this->getNextOnStack();
         $this->assertEquals($this->spieler, $befehl->wer);
-        $this
-            ->assertThat($befehl->befehl,
-                $this
-                    ->logicalOr($this->equalTo('T'), $this->equalTo('M'),
-                        $this->equalTo('H')));
+        $this->assertThat($befehl->befehl, $this->logicalOr($this->equalTo('T'), $this->equalTo('M'), $this->equalTo('H')));
         $this->assertNull($befehl->param);
     }
     
@@ -79,11 +73,7 @@ class SpielerTest extends \PHPUnit_Framework_TestCase
         $this->assertStackCount(1);
         $befehl = $this->getNextOnStack();
         $this->assertEquals($this->spieler, $befehl->wer);
-        $this
-            ->assertThat($befehl->befehl,
-                $this
-                    ->logicalOr($this->equalTo('CJäger1'),
-                        $this->equalTo('CJäger2'), $this->equalTo('CJäger3')));
+        $this->assertThat($befehl->befehl, $this->logicalOr($this->equalTo('CJäger1'), $this->equalTo('CJäger2'), $this->equalTo('CJäger3')));
         $this->assertEquals(null, $befehl->param);
     }
 }

@@ -15,8 +15,7 @@ class QuidditchTest extends \PHPUnit_Framework_TestCase
         $this->quidditch = new Quidditch(new ArrayChat());
         $this->quidditch->team1 = new Team('C', $this->quidditch);
         $this->quidditch->team2 = new Team('X', $this->quidditch);
-        $this->quidditch->schiedsrichter = new Schiedsrichter(
-            'aSchiedsrichter', $this->quidditch);
+        $this->quidditch->schiedsrichter = new Schiedsrichter('aSchiedsrichter', $this->quidditch);
     }
     
     public function testGetAllSpieler()

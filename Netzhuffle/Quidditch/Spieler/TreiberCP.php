@@ -17,13 +17,11 @@ class TreiberCP extends Treiber
 
     public function reactKlatscherfreigeb($befehl)
     {
-        if ($this->feld == $this->quidditch->klatscher1->feld
-            || $this->feld == $this->quidditch->klatscher2->feld) {
+        if ($this->feld == $this->quidditch->klatscher1->feld || $this->feld == $this->quidditch->klatscher2->feld) {
             $drittelSpieler = $this->quidditch->getSpielerInDrittel($this->feld);
             $gegner = array();
             foreach ($drittelSpieler as $spieler) {
-                if ($spieler->team->name != $this->team->name
-                    && !($spieler instanceof Treiber)) {
+                if ($spieler->team->name != $this->team->name && !($spieler instanceof Treiber)) {
                     $gegner[] = $spieler;
                 }
             }

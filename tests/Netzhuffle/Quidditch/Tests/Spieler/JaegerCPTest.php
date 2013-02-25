@@ -36,11 +36,7 @@ class JaegerCPTest extends \PHPUnit_Framework_TestCase
         $this->assertStackCount(1);
         $befehl = $this->getNextOnStack();
         $this->assertEquals($jaeger, $befehl->wer);
-        $this
-            ->assertThat($befehl->befehl,
-                $this
-                    ->logicalOr($this->equalTo('T'), $this->equalTo('M'),
-                        $this->equalTo('H')));
+        $this->assertThat($befehl->befehl, $this->logicalOr($this->equalTo('T'), $this->equalTo('M'), $this->equalTo('H')));
         $this->assertNull($befehl->param);
     }
 }

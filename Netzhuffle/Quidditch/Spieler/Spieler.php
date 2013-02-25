@@ -66,10 +66,8 @@ abstract class Spieler
     public function actDice($befehl)
     {
         $this->dice($this->canDoCommand($befehl));
-        if (isset($this->lastCommand)
-            && method_exists($this, "actDice" . $this->lastCommand->befehl)) {
-            call_user_func(
-                array($this, "actDice" . $this->lastCommand->befehl), $befehl);
+        if (isset($this->lastCommand) && method_exists($this, "actDice" . $this->lastCommand->befehl)) {
+            call_user_func(array($this, "actDice" . $this->lastCommand->befehl), $befehl);
         }
     }
 
@@ -80,12 +78,8 @@ abstract class Spieler
 
     public function reactDice($befehl)
     {
-        if (isset($befehl->wer->lastCommand)
-            && method_exists($this,
-                "actDice" . $befehl->wer->lastCommand->befehl)) {
-            call_user_func(
-                array($this, "actDice" . $befehl->wer->lastCommand->befehl),
-                $befehl);
+        if (isset($befehl->wer->lastCommand) && method_exists($this, "actDice" . $befehl->wer->lastCommand->befehl)) {
+            call_user_func(array($this, "actDice" . $befehl->wer->lastCommand->befehl), $befehl);
         }
     }
 
@@ -99,8 +93,7 @@ abstract class Spieler
     public function reactTordrittel($befehl)
     {
         if ($this->isComputerCaptain()) {
-            $hasTeamQuaffel = ($this->quidditch->quaffel->besitzer
-                && $this->quidditch->quaffel->besitzer->team == $this->team);
+            $hasTeamQuaffel = ($this->quidditch->quaffel->besitzer && $this->quidditch->quaffel->besitzer->team == $this->team);
             if (!$hasTeamQuaffel) {
                 $feld = mt_rand(0, 1) * 2; // = $feld entweder 0 oder 2
                 $this->delay(2, $this->quidditch->feldernamen[$feld]);
@@ -111,8 +104,7 @@ abstract class Spieler
     public function reactQuaffeljäger($befehl)
     {
         if ($this->isComputerCaptain()) {
-            $hasTeamQuaffel = ($this->quidditch->quaffel->besitzer
-                && $this->quidditch->quaffel->besitzer->team == $this->team);
+            $hasTeamQuaffel = ($this->quidditch->quaffel->besitzer && $this->quidditch->quaffel->besitzer->team == $this->team);
             if ($hasTeamQuaffel) {
                 $team = $this->team->name;
                 $nummer = mt_rand(1, 3);
@@ -123,8 +115,7 @@ abstract class Spieler
 
     public function isComputerCaptain()
     {
-        return $this->team && $this->team->isComputer
-            && $this == $this->team->kapitaen;
+        return $this->team && $this->team->isComputer && $this == $this->team->kapitaen;
     }
 
     protected function dice($isAllowed = true)

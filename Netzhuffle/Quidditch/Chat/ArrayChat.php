@@ -17,8 +17,7 @@ class ArrayChat implements ChatInterface
      */
     public function write(Spieler $spieler, $message, $isAllowed)
     {
-        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler,
-            'message' => $message, 'isAllowed' => $isAllowed];
+        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler, 'message' => $message, 'isAllowed' => $isAllowed];
     }
 
     /**
@@ -27,8 +26,7 @@ class ArrayChat implements ChatInterface
      */
     public function rollDice(Spieler $spieler, $die1, $die2, $isAllowed)
     {
-        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler,
-            'die1' => $die1, 'die2' => $die2, 'isAllowed' => $isAllowed];
+        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler, 'die1' => $die1, 'die2' => $die2, 'isAllowed' => $isAllowed];
     }
 
     /**
