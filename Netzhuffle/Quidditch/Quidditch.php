@@ -33,10 +33,10 @@ class Quidditch
         $this->schiedsrichter = null;
         $this->team1 = null;
         $this->team2 = null;
-        $this->klatscher1 = null;
-        $this->klatscher2 = null;
-        $this->quaffel = null;
-        $this->schnatz = null;
+        $this->klatscher1 = new Ball\Klatscher();
+        $this->klatscher2 = new Ball\Klatscher();
+        $this->quaffel = new Ball\Quaffel();
+        $this->schnatz = new Ball\Schnatz();
     }
 
     public function getAllSpieler()
@@ -67,17 +67,13 @@ class Quidditch
 
     public function getSpieler($name)
     {
-        if ($this->schiedsrichter && trim($name) == $this->schiedsrichter->name) {
-            return $this->schiedsrichter;
-        } else {
-            foreach ($this->getAllSpieler() as $spieler) {
-                if ($spieler->name == trim($name)) {
-                    return $spieler;
-                }
+        foreach ($this->getAllSpieler() as $spieler) {
+            if ($spieler->name == trim($name)) {
+                return $spieler;
             }
-
-            return null;
         }
+
+        return null;
     }
 
     public function getSpielerInDrittel($drittel)
@@ -158,10 +154,6 @@ class Quidditch
         $this->team2 = new Team($modus[1], $this);
         $this->team1->setGegner($this->team2);
         $this->team2->setGegner($this->team1);
-        $this->klatscher1 = new Ball\Klatscher();
-        $this->klatscher2 = new Ball\Klatscher();
-        $this->quaffel = new Ball\Quaffel();
-        $this->schnatz = new Ball\Schnatz();
 
         $this->addStackItem(new Befehl($this->schiedsrichter, "Runde", 1, $this), 1);
     }

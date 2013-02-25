@@ -17,15 +17,6 @@ class Befehl
         $this->quidditch = $quidditch;
     }
 
-    private function getSpieler($name)
-    {
-        if ($name instanceof Spieler\Spieler) {
-            return $name;
-        } else {
-            return $this->quidditch->getSpieler($name);
-        }
-    }
-
     public function execute()
     {
         if ($this->wer->canDoCommand($this)) {
