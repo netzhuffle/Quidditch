@@ -1,6 +1,6 @@
 <?php
 
-namespace Netzhuffle\Tests\Quidditch\Spieler;
+namespace Netzhuffle\Quidditch\Tests\Spieler;
 use Netzhuffle\Quidditch\Spiel;
 use Netzhuffle\Quidditch\Spieler\Jaeger;
 use Netzhuffle\Quidditch\Ball\Quaffel;

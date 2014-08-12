@@ -38,7 +38,7 @@ abstract class Spieler
     {
         $this->setCommands(array());
     }
-    
+
     /*
     public function reactQuaffeldice($befehl)
     {
@@ -70,7 +70,7 @@ abstract class Spieler
         }
     }
     */
-    
+
     protected function dice()
     {
         $this->erfolgswurf = mt_rand(1, 6);

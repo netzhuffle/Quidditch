@@ -15,8 +15,8 @@ interface ChatInterface
     /**
      * A Spieler rolls the dice
      * @param Spieler $spieler
-     * @param number  $die1      1–6
-     * @param number  $die2      1–6
+     * @param number  $die1    1–6
+     * @param number  $die2    1–6
      */
     public function rollDice(Spieler $spieler, $die1, $die2);
 }

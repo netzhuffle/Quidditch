@@ -4,7 +4,7 @@ namespace Netzhuffle\Quidditch\Spieler;
 
 class JaegerCP extends Jaeger
 {
-	/*
+    /*
     public function reactPositionjäger()
     {
         if (!$this->hasQuaffel()) {

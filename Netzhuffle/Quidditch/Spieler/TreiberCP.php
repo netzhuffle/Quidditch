@@ -5,7 +5,7 @@ use Netzhuffle\Quidditch\Quidditch;
 
 class TreiberCP extends Treiber
 {
-	/*
+    /*
     public function reactPositiontreiber($befehl)
     {
         $feld = mt_rand(0, 2);

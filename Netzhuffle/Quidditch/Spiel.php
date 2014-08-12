@@ -18,7 +18,7 @@ class Spiel
 
     public function __construct(ChatInterface $chat)
     {
-    	$this->chat = $chat;
+        $this->chat = $chat;
         $this->runde = 0;
         $this->feldernamen = array("T", "M", "H");
         $this->klatscher1 = new Ball\Klatscher();

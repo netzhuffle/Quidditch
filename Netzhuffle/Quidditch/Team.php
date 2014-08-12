@@ -20,8 +20,8 @@ class Team
 
     /**
      * Creates the team
-     * @param string    $name      The teams name, one letter
-     * @param Spiel $spiel An Spiel instance
+     * @param string $name  The teams name, one letter
+     * @param Spiel  $spiel An Spiel instance
      */
     public function __construct($name, Spiel $spiel)
     {
