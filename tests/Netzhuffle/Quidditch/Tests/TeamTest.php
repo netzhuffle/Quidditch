@@ -1,17 +1,17 @@
 <?php
 namespace Netzhuffle\MainChat\Test\Quidditch;
-use Netzhuffle\Quidditch\Quidditch;
+use Netzhuffle\Quidditch\Spiel;
 use Netzhuffle\Quidditch\Chat\ArrayChat;
 use Netzhuffle\Quidditch\Team;
 
 class TeamTest extends \PHPUnit_Framework_TestCase
 {
-    protected $quidditch;
+    protected $spiel;
     protected $team;
     
     public function setUp()
     {
-        $this->quidditch = new Quidditch(new ArrayChat());
+        $this->spiel = new Spiel(new ArrayChat());
     }
     
     public function tearDown()
@@ -21,38 +21,20 @@ class TeamTest extends \PHPUnit_Framework_TestCase
     
     protected function assertPlayer($expectedClass, $expectedName, $actual)
     {
-        $this->assertEquals(new $expectedClass($expectedName, $this->team, $this->quidditch), $actual);
+    	$className = 'Netzhuffle\\Quidditch\\Spieler\\' . $expectedClass;
+        $this->assertEquals(new $className($expectedName, $this->team, $this->spiel), $actual);
     }
     
-    protected function assertPlayerNotCP($expectedClass, $expectedName, $actual)
+    public function testConstructTeam()
     {
-        $this->assertPlayer($expectedClass, $expectedName, $actual);
-        $this->assertNotInstanceOf($expectedClass . 'CP', $actual);
-    }
-    
-    public function testConstructHumanTeam()
-    {
-        $this->team = new Team('H', $this->quidditch);
+        $this->team = new Team('X', $this->spiel);
         
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Jaeger', 'HJäger1', $this->team->jaeger1);
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Jaeger', 'HJäger2', $this->team->jaeger2);
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Jaeger', 'HJäger3', $this->team->jaeger3);
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Hueter', 'HHüter', $this->team->hueter);
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Treiber', 'HTreiber1', $this->team->treiber1);
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Treiber', 'HTreiber2', $this->team->treiber2);
-        $this->assertPlayerNotCP('Netzhuffle\\Quidditch\\Spieler\\Sucher', 'HSucher', $this->team->sucher);
-    }
-    
-    public function testConstructComputerTeam()
-    {
-        $this->team = new Team('X', $this->quidditch);
-        
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\JaegerCP', 'XJäger1', $this->team->jaeger1);
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\JaegerCP', 'XJäger2', $this->team->jaeger2);
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\JaegerCP', 'XJäger3', $this->team->jaeger3);
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\HueterCP', 'XHüter', $this->team->hueter);
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\TreiberCP', 'XTreiber1', $this->team->treiber1);
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\TreiberCP', 'XTreiber2', $this->team->treiber2);
-        $this->assertPlayer('Netzhuffle\\Quidditch\\Spieler\\SucherCP', 'XSucher', $this->team->sucher);
+        $this->assertPlayer('JaegerCP', 'XJäger1', $this->team->jaeger1);
+        $this->assertPlayer('JaegerCP', 'XJäger2', $this->team->jaeger2);
+        $this->assertPlayer('JaegerCP', 'XJäger3', $this->team->jaeger3);
+        $this->assertPlayer('HueterCP', 'XHüter', $this->team->hueter);
+        $this->assertPlayer('TreiberCP', 'XTreiber1', $this->team->treiber1);
+        $this->assertPlayer('TreiberCP', 'XTreiber2', $this->team->treiber2);
+        $this->assertPlayer('SucherCP', 'XSucher', $this->team->sucher);
     }
 }

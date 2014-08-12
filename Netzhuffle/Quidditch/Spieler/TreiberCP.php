@@ -5,8 +5,7 @@ use Netzhuffle\Quidditch\Quidditch;
 
 class TreiberCP extends Treiber
 {
-    // TODO Klatscherabfang & Klatscherabwurf
-
+	/*
     public function reactPositiontreiber($befehl)
     {
         $feld = mt_rand(0, 2);
@@ -68,4 +67,5 @@ class TreiberCP extends Treiber
             $this->block();
         }
     }
+    */
 }

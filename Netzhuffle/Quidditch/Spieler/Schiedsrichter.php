@@ -1,7 +1,7 @@
 <?php
 
 namespace Netzhuffle\Quidditch\Spieler;
-use Netzhuffle\Quidditch\Quidditch;
+use Netzhuffle\Quidditch\Spiel;
 
 class Schiedsrichter extends Spieler
 {
@@ -9,11 +9,12 @@ class Schiedsrichter extends Spieler
     private $die2feld;
     private $waiting = array();
 
-    public function __construct($name, Quidditch $quidditch)
+    public function __construct($name, Spiel $spiel)
     {
-        parent::__construct($name, null, $quidditch);
+        parent::__construct($name, null, $spiel);
     }
 
+    /*
     public function actDice($befehl)
     {
         parent::actDice($befehl);
@@ -257,6 +258,7 @@ class Schiedsrichter extends Spieler
         }
         $this->setTreiberCommands();
     }
+    */
 
     private function getKampfwurfGewinner($spieler1, $spieler2)
     {

@@ -8,6 +8,7 @@ class Treiber extends Spieler
     public $lastHitKlatscher;
     private $didKlatscherwurf;
 
+    /*
     protected function actKlatscherwurf($befehl)
     {
         $this->didKlatscherwurf = true;
@@ -17,6 +18,7 @@ class Treiber extends Spieler
     {
         $this->didKlatscherwurf = false;
     }
+    */
 
     public function hasDoneKlatscherwurf()
     {
@@ -25,8 +27,8 @@ class Treiber extends Spieler
 
     public function hasKlatscher()
     {
-        $hasKlatscher1 = $this == $this->quidditch->klatscher1->besitzer;
-        $hasKlatscher2 = $this == $this->quidditch->klatscher2->besitzer;
+        $hasKlatscher1 = $this == $this->spiel->klatscher1->besitzer;
+        $hasKlatscher2 = $this == $this->spiel->klatscher2->besitzer;
 
         return $hasKlatscher1 || $hasKlatscher2;
     }

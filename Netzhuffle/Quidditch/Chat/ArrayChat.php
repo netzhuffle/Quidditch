@@ -15,18 +15,18 @@ class ArrayChat implements ChatInterface
      * (non-PHPdoc)
      * @see \Netzhuffle\Quidditch\Chat\ChatInterface::write()
      */
-    public function write(Spieler $spieler, $message, $isAllowed)
+    public function write(Spieler $spieler, $message)
     {
-        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler, 'message' => $message, 'isAllowed' => $isAllowed];
+        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler, 'message' => $message];
     }
 
     /**
      * (non-PHPdoc)
      * @see \Netzhuffle\Quidditch\Chat\ChatInterface::rollDice()
      */
-    public function rollDice(Spieler $spieler, $die1, $die2, $isAllowed)
+    public function rollDice(Spieler $spieler, $die1, $die2)
     {
-        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler, 'die1' => $die1, 'die2' => $die2, 'isAllowed' => $isAllowed];
+        $this->messages[] = ['datetime' => new \DateTime(), 'spieler' => $spieler, 'die1' => $die1, 'die2' => $die2];
     }
 
     /**
@@ -35,7 +35,6 @@ class ArrayChat implements ChatInterface
      * 'datetime' (\DateTime),
      * 'spieler' (\Netzhuffle\Quidditch\Spieler\Spieler),
      * 'message' (string) or 'die1'/'die2' (number)
-     * 'isAllowed' (boolean)
      * @return array the messages
      */
     public function getMessages()

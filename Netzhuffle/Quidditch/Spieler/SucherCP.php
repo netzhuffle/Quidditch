@@ -5,11 +5,7 @@ use Netzhuffle\Quidditch\Quidditch;
 
 class SucherCP extends Sucher
 {
-    protected function act($befehl)
-    {
-        parent::act($befehl);
-    }
-
+    /*
     public function react($befehl)
     {
         parent::react($befehl);
@@ -19,4 +15,5 @@ class SucherCP extends Sucher
             $this->delay($delay, $this->quidditch->feldernamen[$feld]);
         }
     }
+    */
 }
